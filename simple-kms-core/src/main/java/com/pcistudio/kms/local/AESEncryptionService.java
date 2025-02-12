@@ -1,7 +1,9 @@
 package com.pcistudio.kms.local;
 
+import com.pcistudio.kms.EncryptionException;
 import com.pcistudio.kms.EncryptionService;
 import com.pcistudio.kms.utils.KeyGenerationUtil;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +13,6 @@ import javax.crypto.spec.GCMParameterSpec;
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.function.Supplier;
 
 public class AESEncryptionService implements EncryptionService {
@@ -29,8 +30,8 @@ public class AESEncryptionService implements EncryptionService {
         this(() -> ByteBuffer.wrap(SECURE_RANDOM.generateSeed(IV_SIZE)));
     }
 
-
     @Override
+    @SuppressFBWarnings("REC_CATCH_EXCEPTION")
     public ByteBuffer decrypt(SecretKey key, ByteBuffer encryptedData) {
         try {
             if (log.isTraceEnabled()) {
@@ -48,26 +49,13 @@ public class AESEncryptionService implements EncryptionService {
 
             Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
             GCMParameterSpec spec = new GCMParameterSpec(128, iv);
-
-//            if (log.isTraceEnabled()) {
-//                log.trace("[REMOVE]Decrypting with key={}, data={}",
-//                        KeyGenerationUtil.keyToBase64(key),
-//                        KeyGenerationUtil.toToBase64(encryptedData)
-//                );
-//            }
             cipher.init(Cipher.DECRYPT_MODE, key, spec);
 
             byte[] bytes = cipher.doFinal(encryptedBytes);
-//            if (log.isTraceEnabled()) {
-//                log.trace("[REMOVE]Data decrypted with key={}, data={}, result={}",
-//                        KeyGenerationUtil.keyToBase64(key),
-//                        KeyGenerationUtil.toToBase64(encryptedData),
-//                        Base64.getEncoder().encodeToString(bytes));
-//            }
 
             return ByteBuffer.wrap(bytes);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new EncryptionException("Error decrypting data", e);
         } finally {
             encryptedData.rewind();
         }
@@ -78,6 +66,7 @@ public class AESEncryptionService implements EncryptionService {
         return encrypt(key, dataBuffer.array());
     }
 
+    @SuppressFBWarnings("REC_CATCH_EXCEPTION")
     private ByteBuffer encrypt(SecretKey key, byte[] data) {
         try {
             Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
@@ -93,12 +82,9 @@ public class AESEncryptionService implements EncryptionService {
             byteBuffer.put(encryptedKey);
             byteBuffer.flip();
 
-            //TODO Remove
-//            log.trace("[REMOVE]Data encrypted with data={} with key={}, result={}", Base64.getEncoder().encodeToString(data), KeyGenerationUtil.keyToBase64(key), KeyGenerationUtil.toToBase64(byteBuffer));
-
             return byteBuffer;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new EncryptionException("Error encrypting data", e);
         }
     }
 

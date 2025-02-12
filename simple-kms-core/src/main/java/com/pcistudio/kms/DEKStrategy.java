@@ -3,14 +3,11 @@ package com.pcistudio.kms;
 import com.pcistudio.kms.local.AESEncryptionService;
 import com.pcistudio.kms.model.EncryptionData;
 import com.pcistudio.kms.model.GeneratedKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.crypto.SecretKey;
 import java.nio.ByteBuffer;
 
 public class DEKStrategy {
-    private static final Logger log = LoggerFactory.getLogger(DEKStrategy.class);
     private final KmsService kmsService;
     private final EncryptionService encryptionService;
 
@@ -27,6 +24,7 @@ public class DEKStrategy {
     /**
      * Encrypts the data using a generated key. EncryptionData contains the encrypted data and the encrypted key.
      * they can be store together because the encrypted key size is not fixed
+     *
      * @param data the data to encrypt
      * @return the encrypted data and the encrypted key
      */

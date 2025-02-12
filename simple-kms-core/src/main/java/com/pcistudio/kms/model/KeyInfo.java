@@ -9,6 +9,7 @@ public record KeyInfo(int id, SecretKey key, Instant createdAt) {
         this(id, key, Instant.now());
     }
 
+    @Override
     public String toString() {
         return "[id=%s, key=%s, createdAt=%s]".formatted(id(), Base64.getEncoder().encodeToString(key().getEncoded()), createdAt());
     }

@@ -24,18 +24,6 @@ public class AESKeyResolverEncryptionService implements KeyResolverEncryptionSer
         this.encryptionService = encryptionService;
     }
 
-//    @Override
-//    public GeneratedKey generateKey() {
-//        try {
-//            SecretKey key = KeyGenerationUtil.generateKeyAES(SECURE_RANDOM, keySize);
-//            return new GeneratedKey()
-//                    .setKey(key)
-//                    .setEncryptedKey(encrypt(ByteBuffer.wrap(key.getEncoded())));
-//        } catch (NoSuchAlgorithmException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-
     @Override
     public ByteBuffer decrypt(ByteBuffer encryptedData) {
         if (log.isTraceEnabled()) {
@@ -44,17 +32,7 @@ public class AESKeyResolverEncryptionService implements KeyResolverEncryptionSer
 
         int keyId = encryptedData.getInt();
         SecretKey key = keyResolver.resolve(keyId);
-        ByteBuffer decrypt = encryptionService.decrypt(key, encryptedData);
-
-//        if (log.isTraceEnabled()) {
-//            log.trace("[REMOVE]Data decrypted with key={}[{}], data={}, result={}",
-//                    keyResolver.resolverName(),
-//                    Base64.getEncoder().encodeToString(key.getEncoded()),
-//                    Base64.getEncoder().encodeToString(encryptedData.array()),
-//                    Base64.getEncoder().encodeToString(decrypt.array()));
-//        }
-
-        return decrypt;
+        return encryptionService.decrypt(key, encryptedData);
     }
 
     @Override

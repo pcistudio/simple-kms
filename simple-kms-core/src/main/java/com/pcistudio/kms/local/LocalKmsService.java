@@ -23,12 +23,12 @@ import static com.pcistudio.kms.local.AESEncryptionService.SECURE_RANDOM;
  * Only use this if you don't have any way to get a KMS or HSM
  * This implementation expect that the key is in a env variable
  */
-public class LocalKmsService implements KmsService {
+public final class LocalKmsService implements KmsService {
     private static final Logger log = LoggerFactory.getLogger(LocalKmsService.class);
     private static final String ALGORITHM = "AES";
 
     private final List<SecretKey> masterKeysHistory;
-    private int keySize;
+    private final int keySize;
     private KeyInfo masterKeyInfo;
     private final KeyResolverEncryptionService encryptionService;
 
@@ -67,6 +67,7 @@ public class LocalKmsService implements KmsService {
      * @param data The data to encrypt.
      * @return The encrypted data as a ByteBuffer.
      */
+    @Override
     public ByteBuffer encrypt(ByteBuffer dataBuffer) {
         return encryptionService.encrypt(dataBuffer);
     }
@@ -91,17 +92,22 @@ public class LocalKmsService implements KmsService {
         masterKeyInfo = new KeyInfo(masterKeysHistory.size() - 1, key);
     }
 
-    private class LocalKmsServiceKeyResolver implements KeyResolver {
+    private final class LocalKmsServiceKeyResolver implements KeyResolver {
+
         @Override
         public SecretKey resolve(int keyId) {
-            log.trace("masterKeyHistorySize={}", masterKeysHistory.size());
-            log.trace("keyId={}", keyId);
+            if (log.isTraceEnabled()) {
+                log.trace("masterKeyHistorySize={}", masterKeysHistory.size());
+                log.trace("keyId={}", keyId);
+            }
             return masterKeysHistory.get(keyId);
         }
 
         @Override
         public KeyInfo currentKey() {
-            return masterKeyInfo;
+            synchronized (LocalKmsService.this) {
+                return masterKeyInfo;
+            }
         }
 
         @Override
