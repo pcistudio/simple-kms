@@ -1,0 +1,49 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.pcistudio</groupId>
+        <artifactId>pci-studio-parent</artifactId>
+        <version>1.0.2</version>
+        <relativePath/>
+    </parent>
+
+    <artifactId>simple-kms</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Simple kms</name>
+    <description>
+        This project contains a simple kms implementation
+    </description>
+    <url>https://pcistudio.github.io/task-processor</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <modules>
+        <module>simple-kms-core</module>
+
+    </modules>
+
+    <scm>
+        <url>https://github.com:pcistudio/simple-kms.git</url>
+        <connection>scm:git:git://github.com:pcistudio/simple-kms.git</connection>
+        <developerConnection>scm:git:git@github.com:pcistudio/simple-kms.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Junior Martori</name>
+            <email>ymdomenech@gmail.com</email>
+            <organization>PciStudio</organization>
+            <organizationUrl>https://pcistudio.github.io/task-processor</organizationUrl>
+        </developer>
+    </developers>
+
+</project>
