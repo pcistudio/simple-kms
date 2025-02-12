@@ -1,19 +1,17 @@
 package com.pcistudio.kms;
 
-import com.pcistudio.kms.model.GeneratedKey;
-
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.ByteBuffer;
 
+/**
+ * Encryption service it will generate the iv and encrypt the data
+ * it will also decrypt the data
+ */
 public interface EncryptionService {
-    GeneratedKey generateKey();
-    ByteBuffer encrypt(ByteBuffer data);
-    ByteBuffer decrypt(ByteBuffer encryptedKey);
-    String getKeyAlgorithm();
 
-    default SecretKey decryptKey(ByteBuffer encryptedKey) {
-        ByteBuffer keyDecrypted = decrypt(encryptedKey);
-        return new SecretKeySpec(keyDecrypted.array(), getKeyAlgorithm());
-    }
+    ByteBuffer encrypt(SecretKey secretKey, ByteBuffer data);
+
+    ByteBuffer decrypt(SecretKey secretKey, ByteBuffer data);
+
+    String getKeyAlgorithm();
 }

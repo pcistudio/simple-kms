@@ -11,7 +11,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class LocalKmsServiceTest {
     private static final Logger log = LoggerFactory.getLogger(LocalKmsServiceTest.class);

@@ -9,7 +9,7 @@ import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class KeyInfoTest {
     private static final Logger log = LoggerFactory.getLogger(KeyInfoTest.class);
