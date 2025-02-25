@@ -17,7 +17,12 @@ public class KeyTestUtil {
     private static final String KEK = "3jFdaAHNNiCoDNTIhKI7jLF2FejoOaWvapnZ501gdko=";
     private static final SecureRandom secureRandom = new SecureRandom();
 
-    public static SecretKey getKEK() throws NoSuchAlgorithmException {
+    static {
+        log.trace("MASTER_KEY={}", MASTER_KEY);
+        log.trace("KEK={}", KEK);
+    }
+
+    public static SecretKey getKEK() {
 //        return KeyGenerationUtil.generateKeyAES(secureRandom, 256);
         return KeyGenerationUtil.loadAESKeyFromBase64(KEK);
     }

@@ -13,14 +13,14 @@ import java.security.NoSuchAlgorithmException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class AESKeyResolverEncryptionServiceTest {
+class LocalKeyResolverEncryptionServiceTest {
     private static final Logger log = LoggerFactory.getLogger(AESEncryptionServiceTest.class);
 
     @Test
     void testEncryptDecrypt() throws NoSuchAlgorithmException {
         SecretKey masterKey = KeyTestUtil.getMasterKey();
 
-        AESKeyResolverEncryptionService aesEncryptionService = new AESKeyResolverEncryptionService(KeyResolvers.master(masterKey), new AESEncryptionService(KeyTestUtil.ivGenerator()));
+        LocalKeyResolverEncryptionService aesEncryptionService = new LocalKeyResolverEncryptionService(KeyResolvers.master(masterKey), new AESEncryptionService(KeyTestUtil.ivGenerator()));
         ByteBuffer encrypt = aesEncryptionService.encrypt(ByteBuffer.wrap("test".getBytes(StandardCharsets.UTF_8)));
         assertNotNull(encrypt);
         ByteBuffer decrypted = aesEncryptionService.decrypt(encrypt);
@@ -34,7 +34,7 @@ class AESKeyResolverEncryptionServiceTest {
         SecretKey masterKey = KeyTestUtil.getMasterKey();
         SecretKey kek = KeyTestUtil.getKEK();
 
-        AESKeyResolverEncryptionService aesEncryptionService = new AESKeyResolverEncryptionService(KeyResolvers.master(masterKey),  new AESEncryptionService(KeyTestUtil.ivGenerator()));
+        LocalKeyResolverEncryptionService aesEncryptionService = new LocalKeyResolverEncryptionService(KeyResolvers.master(masterKey),  new AESEncryptionService(KeyTestUtil.ivGenerator()));
         ByteBuffer encrypt = aesEncryptionService.encrypt(ByteBuffer.wrap(kek.getEncoded()));
         assertNotNull(encrypt);
 

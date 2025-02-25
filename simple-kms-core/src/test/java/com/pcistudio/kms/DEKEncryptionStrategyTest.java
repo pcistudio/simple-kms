@@ -1,5 +1,6 @@
 package com.pcistudio.kms;
 
+import com.pcistudio.kms.local.AESEncryptionService;
 import com.pcistudio.kms.local.LocalKmsService;
 import com.pcistudio.kms.model.EncryptionData;
 import com.pcistudio.kms.util.KeyTestUtil;
@@ -18,14 +19,15 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class DEKStrategyTest {
-    private static final Logger log = LoggerFactory.getLogger(DEKStrategyTest.class);
+class DEKEncryptionStrategyTest {
+    private static final Logger log = LoggerFactory.getLogger(DEKEncryptionStrategyTest.class);
 
     @Test
     void encryptDecrypt() throws NoSuchAlgorithmException {
         SecretKey masterKey = KeyTestUtil.getMasterKey();
         log.info("masterKey={}", KeyGenerationUtil.keyToBase64(masterKey));
-        DEKStrategy kekStrategy = new DEKStrategy(new LocalKmsService(List.of(masterKey), 256));
+        AESEncryptionService aesEncryptionService = new AESEncryptionService(KeyTestUtil.ivGenerator());
+        DEKEncryptionStrategy kekStrategy = new DEKEncryptionStrategy(new LocalKmsService(List.of(masterKey), 256, aesEncryptionService, null), aesEncryptionService);
 
         EncryptionData encryptionData = kekStrategy.encrypt(ByteBuffer.wrap("test".getBytes()));
         assertNotNull(encryptionData);
@@ -38,7 +40,8 @@ class DEKStrategyTest {
     void encrypt100DecryptBack() throws NoSuchAlgorithmException {
         SecretKey masterKey = KeyTestUtil.getMasterKey();
         log.info("masterKey={}", KeyGenerationUtil.keyToBase64(masterKey));
-        DEKStrategy kekStrategy = new DEKStrategy(new LocalKmsService(List.of(masterKey), 256));
+        AESEncryptionService aesEncryptionService = new AESEncryptionService(KeyTestUtil.ivGenerator());
+        DEKEncryptionStrategy kekStrategy = new DEKEncryptionStrategy(new LocalKmsService(List.of(masterKey), 256, aesEncryptionService), aesEncryptionService);
 
         List<EncryptionData> list = new ArrayList<>();
         for (int i = 0; i < 100; i++) {

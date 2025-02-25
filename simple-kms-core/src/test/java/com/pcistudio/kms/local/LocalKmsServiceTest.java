@@ -1,6 +1,7 @@
 package com.pcistudio.kms.local;
 
 import com.pcistudio.kms.model.GeneratedKey;
+import com.pcistudio.kms.util.KeyTestUtil;
 import com.pcistudio.kms.utils.KeyGenerationUtil;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -21,7 +22,7 @@ class LocalKmsServiceTest {
     void generateKey() throws NoSuchAlgorithmException {
         SecretKey masterKey = KeyGenerationUtil.generateKeyAES(new SecureRandom(), 256);
         log.info("masterKey={}", KeyGenerationUtil.keyToBase64(masterKey));
-        LocalKmsService kmsService = new LocalKmsService(List.of(masterKey), 256);
+        LocalKmsService kmsService = new LocalKmsService(List.of(masterKey), 256, new AESEncryptionService(KeyTestUtil.ivGenerator()));
 
         GeneratedKey generatedKey = kmsService.generateKey();
         assertNotNull(generatedKey.getKey());
@@ -33,7 +34,7 @@ class LocalKmsServiceTest {
     @Test
     void liveRotation() throws NoSuchAlgorithmException {
         SecretKey masterKey = KeyGenerationUtil.generateKeyAES(new SecureRandom(), 256);
-        LocalKmsService kmsService = new LocalKmsService(List.of(masterKey), 256);
+        LocalKmsService kmsService = new LocalKmsService(List.of(masterKey), 256, new AESEncryptionService(KeyTestUtil.ivGenerator()));
 
         GeneratedKey generatedKey = kmsService.generateKey();
         assertNotNull(generatedKey.getKey());
