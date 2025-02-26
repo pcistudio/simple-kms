@@ -4,46 +4,83 @@ import com.pcistudio.kms.DEKEncryptionStrategy;
 import com.pcistudio.kms.EncryptionContext;
 import com.pcistudio.kms.EncryptionProvider;
 import com.pcistudio.kms.serialization.Serializer;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import javax.crypto.SecretKey;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
-public class LocalAESEncryptionProvider implements EncryptionProvider {
-    private static final int IV_SIZE = 12;
+public final class LocalAESEncryptionProvider implements EncryptionProvider {
+    private final EncryptionContext encryptionContext;
+    private final String name;
 
-    private final List<SecretKey> masterKeysHistory;
-    private final int keySize;
-    private final Supplier<ByteBuffer> ivSupplier;
-    private final Supplier<SecretKey> keySupplier;
+    private LocalAESEncryptionProvider(LocalAESEncryptionProviderBuilder builder) {
+        Supplier<ByteBuffer> ivSupplier = Objects.requireNonNull(builder.ivSupplier, "ivSupplier cannot be null");
+        Supplier<SecretKey> keySupplier = Objects.requireNonNull(builder.keySupplier, "keySupplier cannot be null");
+        List<SecretKey> masterKeysHistory = Objects.requireNonNull(builder.masterKeysHistory, "masterKeysHistory cannot be null");
+        Serializer serializer = Objects.requireNonNull(builder.serializer, "serializer cannot be null");
 
-    public LocalAESEncryptionProvider(List<SecretKey> masterKeysHistory, int keySize) {
-        this(masterKeysHistory, keySize, null, null);
-    }
+        AESEncryptionService aesEncryptionService = new AESEncryptionService(Objects.requireNonNull(ivSupplier));
+        encryptionContext = new EncryptionContext(
+                new DEKEncryptionStrategy(
+                        new LocalKmsService(masterKeysHistory, aesEncryptionService, Objects.requireNonNull(keySupplier)),
+                        aesEncryptionService
+                ),
+                serializer
+        );
 
-    public LocalAESEncryptionProvider(List<SecretKey> masterKeysHistory, int keySize, Supplier<ByteBuffer> ivSupplier, Supplier<SecretKey> keySupplier) {
-        this.masterKeysHistory = new ArrayList<>(masterKeysHistory);
-        this.keySize = keySize;
-        this.ivSupplier = ivSupplier;
-        this.keySupplier = keySupplier;
+        name = "LOCAL/AES%d/IV%d/%s".formatted(keySupplier.get().getEncoded().length*8, ivSupplier.get().capacity()*8, serializer.name());
     }
 
     @Override
     public EncryptionContext getContext() {
-        AESEncryptionService aesEncryptionService = ivSupplier != null ? new AESEncryptionService(ivSupplier) : new AESEncryptionService(IV_SIZE);
-        return new EncryptionContext(
-                new DEKEncryptionStrategy(
-                        new LocalKmsService(masterKeysHistory, keySize, aesEncryptionService, keySupplier),
-                        aesEncryptionService
-                ),
-                Serializer.JSON
-        );
+        return encryptionContext;
     }
 
     @Override
     public String getName() {
-        return "LOCAL/AES/%d/JSON".formatted(keySize);
+        return name;
+    }
+
+    public static LocalAESEncryptionProviderBuilder builder() {
+        return new LocalAESEncryptionProviderBuilder();
+    }
+
+    public static class LocalAESEncryptionProviderBuilder {
+        @Nullable
+        private List<SecretKey> masterKeysHistory;
+        @Nullable
+        private Supplier<ByteBuffer> ivSupplier;
+        @Nullable
+        private Supplier<SecretKey> keySupplier;
+        @Nullable
+        private Serializer serializer;
+
+        public LocalAESEncryptionProviderBuilder masterKeysHistory(List<SecretKey> masterKeysHistory) {
+            this.masterKeysHistory = new ArrayList<>(masterKeysHistory);
+            return this;
+        }
+
+        public LocalAESEncryptionProviderBuilder ivSupplier(Supplier<ByteBuffer> ivSupplier) {
+            this.ivSupplier = ivSupplier;
+            return this;
+        }
+
+        public LocalAESEncryptionProviderBuilder keySupplier(Supplier<SecretKey> keySupplier) {
+            this.keySupplier = keySupplier;
+            return this;
+        }
+
+        public LocalAESEncryptionProviderBuilder serializer(Serializer serializer) {
+            this.serializer = serializer;
+            return this;
+        }
+
+        public LocalAESEncryptionProvider build() {
+            return new LocalAESEncryptionProvider(this);
+        }
     }
 }

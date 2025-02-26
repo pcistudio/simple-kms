@@ -1,27 +1,35 @@
 package com.pcistudio.kms;
 
 import com.pcistudio.kms.local.LocalAESEncryptionProvider;
-import com.pcistudio.kms.util.KeyTestUtil;
-import org.junit.jupiter.api.Test;
+import com.pcistudio.kms.serialization.Serializer;
+import com.pcistudio.kms.util.TestKeyHelper;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SmartEncryptionTest {
 
-    @Test
-    void test() throws NoSuchAlgorithmException {
+    @ParameterizedTest
+    @MethodSource("com.pcistudio.kms.util.TestKeyHelpers#all")
+    void test(TestKeyHelper testKeyHelper) {
+        LocalAESEncryptionProvider localAESEncryptionProvider = LocalAESEncryptionProvider.builder()
+                .masterKeysHistory(List.of(testKeyHelper.getMasterKey()))
+                .ivSupplier(testKeyHelper.ivGenerator())
+                .keySupplier(testKeyHelper.getKEKSupplier())
+                .serializer(Serializer.JSON)
+                .build();
+
         EncryptionProviderManager encryptionProviderManager = new EncryptionProviderManager()
-                        .register(new LocalAESEncryptionProvider(List.of(KeyTestUtil.getMasterKey()), 256, KeyTestUtil.ivGenerator(), ()-> KeyTestUtil.getKEK()), true);
+                .register(localAESEncryptionProvider, true);
 
         SmartEncryption smartEncryption = new SmartEncryption(encryptionProviderManager);
 
         ByteBuffer encrypted = smartEncryption.encrypt(ByteBuffer.wrap("test".getBytes()));
-
 
         ByteBuffer decrypt = smartEncryption.decrypt(encrypted);
 

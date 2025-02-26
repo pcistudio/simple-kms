@@ -87,7 +87,6 @@ public class AESEncryptionService implements EncryptionService {
             if (log.isTraceEnabled()) {
                 log.trace("Encrypting result={}", KeyGenerationUtil.toToBase64(encryptedKey));
             }
-//            ByteBuffer byteBuffer = ByteBuffer.allocate(iv.length + encryptedKey.length + 4);
             ByteBuffer byteBuffer = ByteBuffer.allocate(iv.length + encryptedKey.length);
             byteBuffer.put(iv);
             byteBuffer.put(encryptedKey);

@@ -1,11 +1,15 @@
 package com.pcistudio.kms;
 
-import java.util.concurrent.ConcurrentHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class EncryptionProviderManager {
+    private static final Logger log = LoggerFactory.getLogger(EncryptionProviderManager.class);
     private final Map<String, EncryptionProvider> encryptionProviderMap = new ConcurrentHashMap<>();
     private final AtomicReference<EncryptionProvider> defaultEncryptionProvider = new AtomicReference<>();
 
@@ -16,6 +20,8 @@ public class EncryptionProviderManager {
             }
             return encryptionProvider;
         });
+
+        log.info("Register EncryptionProvider={}", encryptionProvider.getName());//NOPMD
         return this;
     }
 
