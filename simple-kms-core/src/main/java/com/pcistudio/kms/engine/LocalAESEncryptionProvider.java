@@ -1,9 +1,9 @@
-package com.pcistudio.kms.local;
+package com.pcistudio.kms.engine;
 
 import com.pcistudio.kms.DEKEncryptionStrategy;
-import com.pcistudio.kms.EncryptionContext;
-import com.pcistudio.kms.EncryptionProvider;
-import com.pcistudio.kms.serialization.Serializer;
+import com.pcistudio.kms.local.AESEncryptionService;
+import com.pcistudio.kms.local.LocalKmsService;
+import com.pcistudio.kms.engine.serialization.Serializer;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 import javax.crypto.SecretKey;
@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 public final class LocalAESEncryptionProvider implements EncryptionProvider {
-    private final EncryptionContext encryptionContext;
+    private final EncryptionDescriptor encryptionDescriptor;
     private final String name;
 
     private LocalAESEncryptionProvider(LocalAESEncryptionProviderBuilder builder) {
@@ -23,21 +23,23 @@ public final class LocalAESEncryptionProvider implements EncryptionProvider {
         List<SecretKey> masterKeysHistory = Objects.requireNonNull(builder.masterKeysHistory, "masterKeysHistory cannot be null");
         Serializer serializer = Objects.requireNonNull(builder.serializer, "serializer cannot be null");
 
+
         AESEncryptionService aesEncryptionService = new AESEncryptionService(Objects.requireNonNull(ivSupplier));
-        encryptionContext = new EncryptionContext(
+        LocalKmsService localKmsService = new LocalKmsService(masterKeysHistory, aesEncryptionService, Objects.requireNonNull(keySupplier));
+        encryptionDescriptor = new EncryptionDescriptor(
                 new DEKEncryptionStrategy(
-                        new LocalKmsService(masterKeysHistory, aesEncryptionService, Objects.requireNonNull(keySupplier)),
+                        localKmsService,
                         aesEncryptionService
                 ),
                 serializer
         );
 
-        name = "LOCAL/AES%d/IV%d/%s".formatted(keySupplier.get().getEncoded().length*8, ivSupplier.get().capacity()*8, serializer.name());
+        name = "LOCAL/AES%d/IV%d/%s".formatted(keySupplier.get().getEncoded().length * 8, ivSupplier.get().capacity() * 8, serializer.name());
     }
 
     @Override
-    public EncryptionContext getContext() {
-        return encryptionContext;
+    public EncryptionDescriptor getContext() {
+        return encryptionDescriptor;
     }
 
     @Override

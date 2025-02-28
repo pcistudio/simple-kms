@@ -1,5 +1,6 @@
-package com.pcistudio.kms.model;
+package com.pcistudio.kms.engine;
 
+import com.pcistudio.kms.model.EncryptionData;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.nio.ByteBuffer;
@@ -11,17 +12,12 @@ import java.nio.ByteBuffer;
 //    }
 //}
 @SuppressFBWarnings("EI_EXPOSE_BUF")
-public class ProviderEncryptionData {
+public class SecureEnvelope {
     private String p;
     private byte[] ek;
     private byte[] ed;
-//    public ProviderEncryptionData(String p, byte[] ek, byte[] ed) {
-//        this.p = p;
-//        this.ek = ek;
-//        this.ed = ed;
-//    }
 
-    public ProviderEncryptionData(String p, ByteBuffer ek, ByteBuffer ed) {
+    public SecureEnvelope(String p, ByteBuffer ek, ByteBuffer ed) {
         this.p = p;
         this.ek = ek.array();
         this.ed = ed.array();
@@ -36,7 +32,7 @@ public class ProviderEncryptionData {
     public ByteBuffer getEd() {
         return ByteBuffer.wrap(ed);
     }
-    public static ProviderEncryptionData of(String provider, EncryptionData encryptionData) {
-        return new ProviderEncryptionData(provider, encryptionData.encryptedKey(), encryptionData.encryptedData());
+    public static SecureEnvelope of(String provider, EncryptionData encryptionData) {
+        return new SecureEnvelope(provider, encryptionData.encryptedKey(), encryptionData.encryptedData());
     }
 }

@@ -1,4 +1,4 @@
-package com.pcistudio.kms.serialization;
+package com.pcistudio.kms.engine.serialization;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;

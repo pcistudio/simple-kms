@@ -34,4 +34,6 @@ public class DEKEncryptionStrategy implements EncryptionStrategy {
         SecretKey secretKey = kmsService.decryptKey(encryptionData.encryptedKey());
         return encryptionService.decrypt(secretKey, encryptionData.encryptedData());
     }
+
+
 }

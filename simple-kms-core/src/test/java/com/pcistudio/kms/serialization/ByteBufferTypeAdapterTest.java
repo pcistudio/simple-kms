@@ -1,6 +1,7 @@
 package com.pcistudio.kms.serialization;
 
-import com.pcistudio.kms.model.ProviderEncryptionData;
+import com.pcistudio.kms.engine.SecureEnvelope;
+import com.pcistudio.kms.engine.serialization.Serializer;
 import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
@@ -11,11 +12,11 @@ class ByteBufferTypeAdapterTest {
 
     @Test
     void testJsonSerializer() {
-        ProviderEncryptionData data =
-                new ProviderEncryptionData("provider", ByteBuffer.wrap("key".getBytes()), ByteBuffer.wrap("serialization and deserialization properly.".getBytes()));
+        SecureEnvelope data =
+                new SecureEnvelope("provider", ByteBuffer.wrap("key".getBytes()), ByteBuffer.wrap("serialization and deserialization properly.".getBytes()));
         ByteBuffer serialize = Serializer.JSON.getDataSerializer().serialize(data);
 
-        ProviderEncryptionData deserialize = Serializer.JSON.getDataSerializer().deserialize(serialize);
+        SecureEnvelope deserialize = Serializer.JSON.getDataSerializer().deserializeRemaining(serialize);
 
         assertEquals(data.getP(), deserialize.getP());
         assertEquals(data.getEk(), deserialize.getEk());

@@ -25,7 +25,7 @@ class DEKEncryptionStrategyTest {
     @ParameterizedTest
     @MethodSource("com.pcistudio.kms.util.TestKeyHelpers#all")
     void encryptDecrypt(TestKeyHelper testKeyHelper) {
-        SecretKey masterKey = testKeyHelper.getMasterKey();
+        SecretKey masterKey = testKeyHelper.currentMasterKey();
         log.info("masterKey={}", KeyGenerationUtil.keyToBase64(masterKey));
         AESEncryptionService aesEncryptionService = new AESEncryptionService(testKeyHelper.ivGenerator());
         DEKEncryptionStrategy kekStrategy = new DEKEncryptionStrategy(new LocalKmsService(List.of(masterKey), aesEncryptionService, testKeyHelper.getKEKSupplier()), aesEncryptionService);
@@ -40,7 +40,7 @@ class DEKEncryptionStrategyTest {
     @ParameterizedTest
     @MethodSource("com.pcistudio.kms.util.TestKeyHelpers#all")
     void encrypt100DecryptBack(TestKeyHelper testKeyHelper) {
-        SecretKey masterKey = testKeyHelper.getMasterKey();
+        SecretKey masterKey = testKeyHelper.currentMasterKey();
         log.info("masterKey={}", KeyGenerationUtil.keyToBase64(masterKey));
         AESEncryptionService aesEncryptionService = new AESEncryptionService(testKeyHelper.ivGenerator());
         DEKEncryptionStrategy kekStrategy = new DEKEncryptionStrategy(new LocalKmsService(List.of(masterKey), aesEncryptionService, testKeyHelper.getKEKSupplier()), aesEncryptionService);

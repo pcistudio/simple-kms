@@ -4,7 +4,8 @@
     <parent>
         <groupId>com.pcistudio</groupId>
         <artifactId>pci-studio-parent</artifactId>
-        <version>1.0.7</version>
+<!--        <version>1.0.8</version>-->
+        <version>1.0.9-SNAPSHOT</version>
         <relativePath/>
     </parent>
 

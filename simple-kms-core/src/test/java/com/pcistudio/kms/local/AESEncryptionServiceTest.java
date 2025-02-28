@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import javax.crypto.SecretKey;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,8 +17,8 @@ class AESEncryptionServiceTest {
 
     @ParameterizedTest
     @MethodSource("com.pcistudio.kms.util.TestKeyHelpers#all")
-    void testEncryptDecrypt(TestKeyHelper testKeyHelper) throws NoSuchAlgorithmException {
-        SecretKey masterKey = testKeyHelper.getMasterKey();
+    void testEncryptDecrypt(TestKeyHelper testKeyHelper) {
+        SecretKey masterKey = testKeyHelper.currentMasterKey();
 
         AESEncryptionService aesEncryptionService = new AESEncryptionService(testKeyHelper.ivGenerator());
         ByteBuffer encrypt = aesEncryptionService.encrypt(masterKey, ByteBuffer.wrap("test".getBytes()));
@@ -32,8 +31,8 @@ class AESEncryptionServiceTest {
 
     @ParameterizedTest
     @MethodSource("com.pcistudio.kms.util.TestKeyHelpers#all")
-    void testDecryptKey(TestKeyHelper testKeyHelper) throws NoSuchAlgorithmException {
-        SecretKey masterKey = testKeyHelper.getMasterKey();
+    void testDecryptKey(TestKeyHelper testKeyHelper) {
+        SecretKey masterKey = testKeyHelper.currentMasterKey();
         SecretKey kek = testKeyHelper.getKEK();
 
         AESEncryptionService aesEncryptionService = new AESEncryptionService(testKeyHelper.ivGenerator());
@@ -44,6 +43,4 @@ class AESEncryptionServiceTest {
         assertNotNull(decrypt);
         assertArrayEquals(kek.getEncoded(), decrypt.array());
     }
-
-
 }

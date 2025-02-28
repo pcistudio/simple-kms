@@ -1,0 +1,20 @@
+{
+  "type": "record",
+  "namespace": "com.pcistudio.kms.model.generated",
+  "name": "SecureEnvelopeAvro",
+  "doc": "Helper class to  allow avro conversion",
+  "fields": [
+    {
+      "name": "provider",
+      "type": "string"
+    },
+    {
+      "name": "encryptedKey",
+      "type": "bytes"
+    },
+    {
+      "name": "encryptedData",
+      "type": "bytes"
+    }
+  ]
+}

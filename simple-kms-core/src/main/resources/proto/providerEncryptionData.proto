@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package com.pcistudio.kms.model.generated;
+
+option java_package = "com.pcistudio.kms.model.generated";
+option java_outer_classname = "SecureEnvelopeProto";
+
+message Envelope {
+  string provider = 1;
+  bytes encryptedKey = 2;
+  bytes encryptedData = 3;
+}

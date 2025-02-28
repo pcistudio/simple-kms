@@ -22,6 +22,7 @@ public class AESEncryptionService implements EncryptionService {
     private final int ivSize;
     private final Supplier<ByteBuffer> ivGenerator;
 
+
     public AESEncryptionService(Supplier<ByteBuffer> ivGenerator) {
         this.ivGenerator = ivGenerator;
         this.ivSize = ivGenerator.get().capacity();

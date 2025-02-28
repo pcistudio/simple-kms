@@ -1,4 +1,4 @@
-package com.pcistudio.kms;
+package com.pcistudio.kms.engine;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +30,19 @@ public class EncryptionProviderManager {
         if (defaultProvider) {
             defaultProvider(encryptionProvider.getName());
         }
+        return this;
+    }
+
+    /**
+     * Override the previous provider. Useful on testing
+     *
+     * @param encryptionProvider
+     * @return
+     */
+    public EncryptionProviderManager update(EncryptionProvider encryptionProvider) {
+        encryptionProviderMap.put(encryptionProvider.getName(), encryptionProvider);
+
+        log.info("Updated Register EncryptionProvider={}", encryptionProvider.getName());//NOPMD
         return this;
     }
 

@@ -26,7 +26,7 @@ public final class LocalKmsService implements KmsService {
     private static final String ALGORITHM = "AES";
 
     private final List<SecretKey> masterKeysHistory;
-//    private final int keySize;
+    //    private final int keySize;
     private KeyInfo masterKeyInfo;
     private final KeyResolverEncryptionService encryptionService;
     private final Supplier<SecretKey> keySupplier;
@@ -90,6 +90,7 @@ public final class LocalKmsService implements KmsService {
     public synchronized void liveRotation(SecretKey key) {
         masterKeysHistory.add(key);
         masterKeyInfo = new KeyInfo(masterKeysHistory.size() - 1, key);
+        log.warn("New master key id={} has be added", masterKeyInfo.id());
     }
 
     private final class LocalKmsServiceKeyResolver implements KeyResolver {

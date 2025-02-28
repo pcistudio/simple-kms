@@ -1,13 +1,13 @@
-package com.pcistudio.kms.serialization;
+package com.pcistudio.kms.engine.serialization;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public enum Serializer {
     JSON((byte) 1, new GsonDataSerializer()),
-    AVRO((byte) 2, new AvroDataSerializer()),
-    PROTOBUF((byte) 3, new ProtoDataSerializer()),
-    THRIFT((byte) 4, new ThriftDataSerializer());
+    BSON((byte) 2, new BsonDataSerializer()),
+    AVRO((byte) 3, new AvroDataSerializer()),
+    PROTOBUF((byte) 4, new ProtoDataSerializer());
 
     private static final Map<Byte, Serializer> LOOKUP_MAP = new HashMap<>();
 
