@@ -1,23 +1,21 @@
 package com.pcistudio.kms.local;
 
+import com.pcistudio.kms.EncryptionService;
 import com.pcistudio.kms.KeyResolver;
 import com.pcistudio.kms.KeyResolverEncryptionService;
 import com.pcistudio.kms.KmsService;
 import com.pcistudio.kms.model.GeneratedKey;
 import com.pcistudio.kms.model.KeyInfo;
-import com.pcistudio.kms.utils.KeyGenerationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.ByteBuffer;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-
-import static com.pcistudio.kms.local.AESEncryptionService.SECURE_RANDOM;
+import java.util.function.Supplier;
 
 /**
  * Only use this if you don't have any way to get a KMS or HSM
@@ -28,37 +26,39 @@ public final class LocalKmsService implements KmsService {
     private static final String ALGORITHM = "AES";
 
     private final List<SecretKey> masterKeysHistory;
-    private final int keySize;
+    //    private final int keySize;
     private KeyInfo masterKeyInfo;
     private final KeyResolverEncryptionService encryptionService;
+    private final Supplier<SecretKey> keySupplier;
 
-    public LocalKmsService(List<SecretKey> masterKeysHistory, int keySize) {
+    public LocalKmsService(List<SecretKey> masterKeysHistory, EncryptionService encryptionService, Supplier<SecretKey> keySupplier) {
         this.masterKeysHistory = new ArrayList<>(masterKeysHistory);
         this.masterKeyInfo = new KeyInfo(masterKeysHistory.size() - 1, masterKeysHistory.get(masterKeysHistory.size() - 1));
-        this.encryptionService = new AESKeyResolverEncryptionService(
+        this.encryptionService = new LocalKeyResolverEncryptionService(
                 new LocalKmsServiceKeyResolver(),
-                new AESEncryptionService()
+                encryptionService
         );
-        this.keySize = keySize;
+//        this.keySize = keySize;
+        this.keySupplier = keySupplier;
     }
 
-    public static LocalKmsService fromStringList(List<String> masterKeys, int keySize) {
+//    public LocalKmsService(List<SecretKey> masterKeysHistory, int keySize, EncryptionService encryptionService) {
+//       this(masterKeysHistory, keySize, encryptionService, null);
+//    }
+
+    public static LocalKmsService fromStringList(List<String> masterKeys, EncryptionService encryptionService, Supplier<SecretKey> keySupplier) {
         List<SecretKey> keys = masterKeys.stream()
                 .map(masterKey -> (SecretKey) new SecretKeySpec(Base64.getDecoder().decode(masterKey), ALGORITHM))
                 .toList();
-        return new LocalKmsService(keys, keySize);
+        return new LocalKmsService(keys, encryptionService, keySupplier);
     }
 
     @Override
     public GeneratedKey generateKey() {
-        try {
-            SecretKey key = KeyGenerationUtil.generateKeyAES(SECURE_RANDOM, keySize);
-            return new GeneratedKey()
-                    .setKey(key)
-                    .setEncryptedKey(encrypt(ByteBuffer.wrap(key.getEncoded())));
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        SecretKey key = keySupplier.get();
+        return new GeneratedKey()
+                .setKey(key)
+                .setEncryptedKey(encrypt(ByteBuffer.wrap(key.getEncoded())));
     }
 
     /**
@@ -90,6 +90,7 @@ public final class LocalKmsService implements KmsService {
     public synchronized void liveRotation(SecretKey key) {
         masterKeysHistory.add(key);
         masterKeyInfo = new KeyInfo(masterKeysHistory.size() - 1, key);
+        log.warn("New master key id={} has be added", masterKeyInfo.id());
     }
 
     private final class LocalKmsServiceKeyResolver implements KeyResolver {

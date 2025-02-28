@@ -11,15 +11,14 @@ import javax.crypto.SecretKey;
 import java.nio.ByteBuffer;
 import java.util.Base64;
 
-//TODO Remove AES from the name
-public class AESKeyResolverEncryptionService implements KeyResolverEncryptionService {
-    private static final Logger log = LoggerFactory.getLogger(AESKeyResolverEncryptionService.class);
+public class LocalKeyResolverEncryptionService implements KeyResolverEncryptionService {
+    private static final Logger log = LoggerFactory.getLogger(LocalKeyResolverEncryptionService.class);
 
     private final KeyResolver keyResolver;
 
     private final EncryptionService encryptionService;
 
-    public AESKeyResolverEncryptionService(KeyResolver keyResolver, EncryptionService encryptionService) {
+    public LocalKeyResolverEncryptionService(KeyResolver keyResolver, EncryptionService encryptionService) {
         this.keyResolver = keyResolver;
         this.encryptionService = encryptionService;
     }
@@ -38,6 +37,7 @@ public class AESKeyResolverEncryptionService implements KeyResolverEncryptionSer
     @Override
     public ByteBuffer encrypt(ByteBuffer dataBuffer) {
         KeyInfo keyInfo = keyResolver.currentKey();
+
         ByteBuffer encrypt = encryptionService.encrypt(keyInfo.key(), dataBuffer);
 
         ByteBuffer result = ByteBuffer.allocate(4 + encrypt.capacity());
