@@ -21,4 +21,4 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Build with Maven
-        run: TESTCONTAINERS_RYUK_DISABLED=true mvn -B verify --file pom.xml
+        run: TESTCONTAINERS_RYUK_DISABLED=true ./mvnw -B verify --file pom.xml
