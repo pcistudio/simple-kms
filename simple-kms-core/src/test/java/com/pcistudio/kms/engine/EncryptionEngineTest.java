@@ -1,9 +1,6 @@
-package com.pcistudio.kms;
+package com.pcistudio.kms.engine;
 
 import com.pcistudio.kms.engine.serialization.Serializer;
-import com.pcistudio.kms.engine.EncryptionEngine;
-import com.pcistudio.kms.engine.EncryptionProvider;
-import com.pcistudio.kms.engine.EncryptionProviderManager;
 import com.pcistudio.kms.util.TestKeyHelper;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -21,7 +18,7 @@ class EncryptionEngineTest {
 
     @ParameterizedTest
     @MethodSource("com.pcistudio.kms.util.TestKeyHelpers#all")
-    void test(TestKeyHelper testKeyHelper) {
+    void testLocalAESEncryptionProviderWithRandomKeys(TestKeyHelper testKeyHelper) {
         EncryptionProvider localAESEncryptionProvider = testKeyHelper.localProvider(Serializer.JSON);
 
         EncryptionProviderManager encryptionProviderManager = new EncryptionProviderManager()
@@ -38,7 +35,7 @@ class EncryptionEngineTest {
 
     @ParameterizedTest
     @MethodSource("com.pcistudio.kms.util.TestKeyHelpers#staticsOnly")
-    void test2(TestKeyHelper testKeyHelper) {
+    void testLocalAESEncryptionProviderWithStaticKeys(TestKeyHelper testKeyHelper) {
         EncryptionProvider localAESEncryptionProvider = testKeyHelper.localProvider(Serializer.JSON);
 
         EncryptionProviderManager encryptionProviderManager = new EncryptionProviderManager()
@@ -55,7 +52,7 @@ class EncryptionEngineTest {
 
     @ParameterizedTest
     @MethodSource("com.pcistudio.kms.util.TestKeyHelpers#staticDefault")
-    void test3(TestKeyHelper testKeyHelper) {
+    void testLocalAESEncryptionProviderRotatingMasterKey(TestKeyHelper testKeyHelper) {
 
         EncryptionProvider localAESEncryptionProvider = testKeyHelper.localProvider(Serializer.JSON);
 
@@ -92,7 +89,7 @@ class EncryptionEngineTest {
 
     @ParameterizedTest
     @MethodSource("com.pcistudio.kms.util.TestKeyHelpers#staticDefault")
-    void test4(TestKeyHelper testKeyHelper) {
+    void testTwoDiffLocalAESEncryptionProvider(TestKeyHelper testKeyHelper) {
 
         EncryptionProvider localAESEncryptionProvider = testKeyHelper.localProvider(Serializer.JSON);
 

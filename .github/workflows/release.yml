@@ -1,0 +1,25 @@
+name: Creating Release and Deploying to Maven Central
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: write
+jobs:
+  deploy-mvn-central:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Release to Maven Central and to GitHub
+        uses: pcistudio/actions/release@v1.21
+        with:
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY_RELEASE }}
+          ssh-key-name: "SSH_PRIVATE_KEY_RELEASE"
+          user-email: "${{ vars.RELEASE_EMAIL }}"
+          user-name: "${{ vars.RELEASE_USER }}"
+          token: "${{ secrets.GIT_ADMIN_PAT }}"
+          maven-central-username: "${{ secrets.MAVEN_CENTRAL_USERNAME }}"
+          maven-central-password: "${{ secrets.MAVEN_CENTRAL_PASSWORD }}"
+          gpg-passphrase: "${{ secrets.GPG_PASSPHRASE }}"
+          gpg-private-key: "${{ secrets.GPG_PRIVATE_KEY }}"
+          gh-token: "${{ secrets.GITHUB_TOKEN }}"
