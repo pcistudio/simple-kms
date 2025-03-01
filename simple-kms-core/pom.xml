@@ -18,6 +18,7 @@
         <bson.version>5.3.1</bson.version>
         <avro.version>1.12.0</avro.version>
         <protobuf.version>4.29.3</protobuf.version>
+        <awssdk.version>2.30.30</awssdk.version>
     </properties>
 
     <dependencies>
@@ -74,7 +75,27 @@
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
             <version>${protobuf.version}</version>
-
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>kms</artifactId>
+            <version>${awssdk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.reactivestreams</groupId>
+            <artifactId>reactive-streams</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+<!--            <version>1.19.8</version>-->
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -122,23 +143,6 @@
                         <goals>
                             <goal>compile</goal>
                             <goal>test-compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.thrift.tools</groupId>
-                <artifactId>maven-thrift-plugin</artifactId>
-                <version>0.1.11</version>
-                <configuration>
-                    <thriftExecutable>path/to/thrift</thriftExecutable>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>thrift-sources</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>compile</goal>
                         </goals>
                     </execution>
                 </executions>
