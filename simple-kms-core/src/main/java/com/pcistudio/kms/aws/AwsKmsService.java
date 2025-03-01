@@ -2,24 +2,24 @@ package com.pcistudio.kms.aws;
 
 import com.pcistudio.kms.KmsService;
 import com.pcistudio.kms.model.GeneratedKey;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kms.KmsClient;
+import software.amazon.awssdk.services.kms.KmsClientBuilder;
 import software.amazon.awssdk.services.kms.model.*;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.ByteBuffer;
 
-@SuppressFBWarnings({"EI_EXPOSE_REP2"})
+
 public class AwsKmsService implements KmsService {
     private final String keyId;
     private final KmsClient kmsClient;
     private final DataKeySpec dataKeySpec;
 
-    public AwsKmsService(String keyId, KmsClient kmsClient, DataKeySpec dataKeySpec) {
+    public AwsKmsService(String keyId, KmsClientBuilder kmsClientBuilder, DataKeySpec dataKeySpec) {
         this.keyId = keyId;
-        this.kmsClient = kmsClient;
+        this.kmsClient = kmsClientBuilder.build();
         this.dataKeySpec = dataKeySpec;
         Runtime.getRuntime().addShutdownHook(new Thread(kmsClient::close));
     }

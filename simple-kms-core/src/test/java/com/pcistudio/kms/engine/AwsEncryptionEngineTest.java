@@ -17,6 +17,7 @@ import org.testcontainers.utility.DockerImageName;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kms.KmsClient;
+import software.amazon.awssdk.services.kms.KmsClientBuilder;
 import software.amazon.awssdk.services.kms.model.CreateKeyResponse;
 import software.amazon.awssdk.services.kms.model.DataKeySpec;
 
@@ -39,35 +40,30 @@ class AwsEncryptionEngineTest {
             .withExposedPorts(DEFAULT_EXPOSED_PORT)
             .waitingFor(Wait.forListeningPorts(DEFAULT_EXPOSED_PORT))
             .withEnv("SERVICES", "kms");
-    KmsClient kmsClient;
+    private KmsClientBuilder kmsClientBuilder;
 
     @BeforeEach
     void setUp() {
-        kmsClient = KmsClient.builder()
+        kmsClientBuilder = KmsClient.builder()
                 .region(Region.US_EAST_1)
                 .endpointOverride(java.net.URI.create("http://%s:%d".formatted(container.getHost(), container.getFirstMappedPort())))
                 .credentialsProvider(StaticCredentialsProvider.create(
                         software.amazon.awssdk.auth.credentials.AwsBasicCredentials.create("test", "test")
-                ))
-                .build();
+                ));
     }
 
-    @AfterEach
-    void tearDown() {
-        this.kmsClient.close();
-    }
 
     @Test
     void testAwsAESEncryptionProvider() {
         assertThat(container.isRunning()).isTrue();
 
-        CreateKeyResponse createKeyResponse = kmsClient.createKey();
+        CreateKeyResponse createKeyResponse = kmsClientBuilder.build().createKey();
         String keyId = createKeyResponse.keyMetadata().keyId();
 
         EncryptionProvider awsAESEncryptionProvider = AwsAESEncryptionProvider.builder()
                 .dataKeySpec(DataKeySpec.AES_256)
                 .ivSupplier(() -> ByteBuffer.wrap(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}))
-                .kmsClient(kmsClient)
+                .kmsClientBuilder(kmsClientBuilder)
                 .keyId(keyId)
                 .serializer(Serializer.JSON)
                 .build();
@@ -105,13 +101,13 @@ class AwsEncryptionEngineTest {
 
         assertEquals(test, new String(decrypt.array(), StandardCharsets.UTF_8));
 
-        CreateKeyResponse createKeyResponse = kmsClient.createKey();
+        CreateKeyResponse createKeyResponse = kmsClientBuilder.build().createKey();
         String keyId = createKeyResponse.keyMetadata().keyId();
 
         EncryptionProvider awsAESEncryptionProvider = AwsAESEncryptionProvider.builder()
                 .dataKeySpec(DataKeySpec.AES_256)
                 .ivSupplier(() -> ByteBuffer.wrap(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}))
-                .kmsClient(kmsClient)
+                .kmsClientBuilder(kmsClientBuilder)
                 .keyId(keyId)
                 .serializer(Serializer.PROTOBUF)
                 .build();

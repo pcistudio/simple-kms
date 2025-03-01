@@ -35,7 +35,6 @@ public class KeyGenerationUtil {
         return Base64.getEncoder().encodeToString(key.getEncoded());
     }
 
-    //TODO check that base64 is in one line
     public static String toToBase64(ByteBuffer byteBuffer) {
         return toToBase64(byteBuffer.array());
     }
