@@ -64,7 +64,7 @@ public final class LocalKmsService implements KmsService {
     /**
      * Encrypts the given data using AES/GCM/NoPadding.
      *
-     * @param data The data to encrypt.
+     * @param dataBuffer The data to encrypt.
      * @return The encrypted data as a ByteBuffer.
      */
     @Override
