@@ -26,10 +26,10 @@ public final class LocalKmsService implements KmsService {
     private static final String ALGORITHM = "AES";
 
     private final List<SecretKey> masterKeysHistory;
-    //    private final int keySize;
-    private KeyInfo masterKeyInfo;
     private final KeyResolverEncryptionService encryptionService;
     private final Supplier<SecretKey> keySupplier;
+
+    private KeyInfo masterKeyInfo;
 
     public LocalKmsService(List<SecretKey> masterKeysHistory, EncryptionService encryptionService, Supplier<SecretKey> keySupplier) {
         this.masterKeysHistory = new ArrayList<>(masterKeysHistory);
@@ -38,13 +38,8 @@ public final class LocalKmsService implements KmsService {
                 new LocalKmsServiceKeyResolver(),
                 encryptionService
         );
-//        this.keySize = keySize;
         this.keySupplier = keySupplier;
     }
-
-//    public LocalKmsService(List<SecretKey> masterKeysHistory, int keySize, EncryptionService encryptionService) {
-//       this(masterKeysHistory, keySize, encryptionService, null);
-//    }
 
     public static LocalKmsService fromStringList(List<String> masterKeys, EncryptionService encryptionService, Supplier<SecretKey> keySupplier) {
         List<SecretKey> keys = masterKeys.stream()

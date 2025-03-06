@@ -13,6 +13,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DataSerializerTest {
 
@@ -57,6 +58,6 @@ class DataSerializerTest {
         log.info("jsonSize={}, bsonSize={}, avroData={}, protoData={}",
                 jsonData.array().length, bsonData.array().length, avroData.array().length, protoData.array().length);
 
-
+        assertTrue(protoData.array().length < jsonData.array().length);
     }
 }

@@ -83,6 +83,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 
@@ -111,7 +116,6 @@
                         </goals>
                         <configuration>
                             <sourceDirectory>${project.basedir}/src/main/resources/</sourceDirectory>
-<!--                            <outputDirectory>${project.basedir}/src/main/java/</outputDirectory>-->
                         </configuration>
                     </execution>
                 </executions>

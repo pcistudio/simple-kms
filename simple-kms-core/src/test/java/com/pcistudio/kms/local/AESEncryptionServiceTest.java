@@ -3,8 +3,6 @@ package com.pcistudio.kms.local;
 import com.pcistudio.kms.util.TestKeyHelper;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.crypto.SecretKey;
 import java.nio.ByteBuffer;
@@ -13,7 +11,6 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AESEncryptionServiceTest {
-    private static final Logger log = LoggerFactory.getLogger(AESEncryptionServiceTest.class);
 
     @ParameterizedTest
     @MethodSource("com.pcistudio.kms.util.TestKeyHelpers#all")

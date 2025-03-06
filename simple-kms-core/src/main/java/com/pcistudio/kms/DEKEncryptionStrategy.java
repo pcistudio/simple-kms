@@ -35,8 +35,8 @@ public class DEKEncryptionStrategy implements EncryptionStrategy {
     @Override
     public EncryptionData encrypt(ByteBuffer data) {
         GeneratedKey generatedKey = keyReuseStrategy.generateKey();
-        ByteBuffer encryptedData = encryptionService.encrypt(generatedKey.getKey(), data);
-        return new EncryptionData(generatedKey.getEncryptedKey(), encryptedData);
+        ByteBuffer encryptedData = encryptionService.encrypt(generatedKey.key(), data);
+        return new EncryptionData(generatedKey.encryptedKey(), encryptedData);
     }
 
     @Override

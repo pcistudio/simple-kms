@@ -9,7 +9,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
-public class KeyGenerationUtil {
+public final class KeyGenerationUtil {
+    private KeyGenerationUtil() {}
+
     public static SecretKey generateKey(String algorithm, int keySize, SecureRandom secureRandom) throws NoSuchAlgorithmException {
         KeyGenerator keyGen = KeyGenerator.getInstance(algorithm);
         keyGen.init(keySize, secureRandom);

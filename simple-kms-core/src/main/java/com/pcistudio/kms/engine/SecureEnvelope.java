@@ -5,12 +5,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.nio.ByteBuffer;
 
-//@SuppressFBWarnings({"EI_EXPOSE_REP2", "EI_EXPOSE_REP"})
-//public record ProviderEncryptionData(String p, ByteBuffer ek, ByteBuffer ed) {
-//    public static ProviderEncryptionData of(String provider, EncryptionData encryptionData) {
-//        return new ProviderEncryptionData(provider, encryptionData.encryptedKey(), encryptionData.encryptedData());
-//    }
-//}
 @SuppressFBWarnings("EI_EXPOSE_BUF")
 public class SecureEnvelope {
     private String p;
