@@ -1,7 +1,7 @@
 package com.pcistudio.kms.engine;
 
-import com.pcistudio.kms.model.EncryptionData;
 import com.pcistudio.kms.engine.serialization.Serializer;
+import com.pcistudio.kms.model.EncryptionData;
 import org.slf4j.Logger;
 
 import java.nio.ByteBuffer;

@@ -56,9 +56,7 @@ public final class LocalKmsService implements KmsService {
     @Override
     public GeneratedKey generateKey() {
         SecretKey key = keySupplier.get();
-        return new GeneratedKey()
-                .setKey(key)
-                .setEncryptedKey(encrypt(ByteBuffer.wrap(key.getEncoded())));
+        return new GeneratedKey(key, encrypt(ByteBuffer.wrap(key.getEncoded())));
     }
 
     /**

@@ -1,9 +1,9 @@
 package com.pcistudio.kms.engine;
 
 import com.pcistudio.kms.DEKEncryptionStrategy;
+import com.pcistudio.kms.engine.serialization.Serializer;
 import com.pcistudio.kms.local.AESEncryptionService;
 import com.pcistudio.kms.local.LocalKmsService;
-import com.pcistudio.kms.engine.serialization.Serializer;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 import javax.crypto.SecretKey;

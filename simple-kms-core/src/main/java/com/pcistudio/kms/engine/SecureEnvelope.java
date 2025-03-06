@@ -17,10 +17,13 @@ public class SecureEnvelope {
     private byte[] ek;
     private byte[] ed;
 
-    public SecureEnvelope(String p, ByteBuffer ek, ByteBuffer ed) {
+    public SecureEnvelope(String p, ByteBuffer ekBuffer, ByteBuffer edBuffer) {
         this.p = p;
-        this.ek = ek.array();
-        this.ed = ed.array();
+
+        this.ek = new byte[ekBuffer.remaining()];
+        ekBuffer.get(this.ek);
+        this.ed = new byte[edBuffer.remaining()];
+        edBuffer.get(this.ed);
     }
 
     public String getP() {
