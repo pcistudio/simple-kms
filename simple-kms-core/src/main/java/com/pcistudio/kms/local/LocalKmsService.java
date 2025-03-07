@@ -15,6 +15,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 /**
@@ -29,11 +30,14 @@ public final class LocalKmsService implements KmsService {
     private final KeyResolverEncryptionService encryptionService;
     private final Supplier<SecretKey> keySupplier;
 
-    private KeyInfo masterKeyInfo;
+    private final AtomicReference<KeyInfo> masterKeyInfo;
 
     public LocalKmsService(List<SecretKey> masterKeysHistory, EncryptionService encryptionService, Supplier<SecretKey> keySupplier) {
+        if (masterKeysHistory.isEmpty()) {
+            throw new IllegalArgumentException("None master key configured");
+        }
         this.masterKeysHistory = new ArrayList<>(masterKeysHistory);
-        this.masterKeyInfo = new KeyInfo(masterKeysHistory.size() - 1, masterKeysHistory.get(masterKeysHistory.size() - 1));
+        this.masterKeyInfo = new AtomicReference<>(new KeyInfo(masterKeysHistory.size() - 1, masterKeysHistory.get(masterKeysHistory.size() - 1)));
         this.encryptionService = new LocalKeyResolverEncryptionService(
                 new LocalKmsServiceKeyResolver(),
                 encryptionService
@@ -80,10 +84,10 @@ public final class LocalKmsService implements KmsService {
         return encryptionService.decryptKey(encryptedKey);
     }
 
-    public synchronized void liveRotation(SecretKey key) {
+    synchronized void liveRotation(SecretKey key) {
         masterKeysHistory.add(key);
-        masterKeyInfo = new KeyInfo(masterKeysHistory.size() - 1, key);
-        log.warn("New master key id={} has be added", masterKeyInfo.id());
+        masterKeyInfo.set(new KeyInfo(masterKeysHistory.size() - 1, key));
+        log.warn("New master key id={} has be added", masterKeyInfo.get().id());
     }
 
     private final class LocalKmsServiceKeyResolver implements KeyResolver {
@@ -99,9 +103,7 @@ public final class LocalKmsService implements KmsService {
 
         @Override
         public KeyInfo currentKey() {
-            synchronized (LocalKmsService.this) {
-                return masterKeyInfo;
-            }
+            return masterKeyInfo.get();
         }
 
         @Override

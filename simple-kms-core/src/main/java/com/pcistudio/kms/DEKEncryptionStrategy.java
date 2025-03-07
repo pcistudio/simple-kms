@@ -13,6 +13,7 @@ public class DEKEncryptionStrategy implements EncryptionStrategy {
     private final EncryptionService encryptionService;
     private final KeyReuseStrategy keyReuseStrategy;
 
+    //TODO Remove this constructor in favor of the other
     public DEKEncryptionStrategy(KmsService kmsService, EncryptionService encryptionService) {
         this(kmsService,encryptionService, KeyReuseStrategy.builder());
     }

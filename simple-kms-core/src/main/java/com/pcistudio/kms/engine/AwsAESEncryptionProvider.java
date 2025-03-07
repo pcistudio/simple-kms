@@ -34,7 +34,7 @@ public final class AwsAESEncryptionProvider implements EncryptionProvider {
                 serializer
         );
 
-        name = "AWS/%s/IV%d/%s".formatted(dataKeySpec.name(), ivSupplier.get().capacity() * 8, serializer.name());
+        name = "AWS/%s/IV%d/%s@%s".formatted(dataKeySpec.name(), ivSupplier.get().capacity() * 8, serializer.name(), keyId.substring(0, Math.min(keyId.length(), 8)));
     }
 
     @Override
@@ -51,7 +51,7 @@ public final class AwsAESEncryptionProvider implements EncryptionProvider {
         return new AwsAESEncryptionProviderBuilder();
     }
 
-    public static class AwsAESEncryptionProviderBuilder {
+    public static class AwsAESEncryptionProviderBuilder implements EncryptionProviderBuilder {
         @Nullable
         private String keyId;
         @Nullable

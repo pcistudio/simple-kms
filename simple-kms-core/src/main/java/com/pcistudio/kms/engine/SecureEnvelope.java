@@ -13,7 +13,6 @@ public class SecureEnvelope {
 
     public SecureEnvelope(String p, ByteBuffer ekBuffer, ByteBuffer edBuffer) {
         this.p = p;
-
         this.ek = new byte[ekBuffer.remaining()];
         ekBuffer.get(this.ek);
         this.ed = new byte[edBuffer.remaining()];
@@ -33,3 +32,4 @@ public class SecureEnvelope {
         return new SecureEnvelope(provider, encryptionData.encryptedKey(), encryptionData.encryptedData());
     }
 }
+

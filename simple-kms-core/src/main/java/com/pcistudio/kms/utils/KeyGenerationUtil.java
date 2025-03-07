@@ -8,8 +8,11 @@ import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.function.Supplier;
 
 public final class KeyGenerationUtil {
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
     private KeyGenerationUtil() {}
 
     public static SecretKey generateKey(String algorithm, int keySize, SecureRandom secureRandom) throws NoSuchAlgorithmException {
@@ -27,6 +30,18 @@ public final class KeyGenerationUtil {
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("Algorithm not valid", e);
         }
+    }
+
+    public static SecretKey generateKeyAES(int keySize) {
+        return generateKeyAES(SECURE_RANDOM, keySize);
+    }
+
+    public static Supplier<ByteBuffer> ivSupplier(int bits) {
+        if (bits % 8 != 0) {
+            throw new IllegalArgumentException("Invalid bits number for initialization vector");
+        }
+
+        return () -> ByteBuffer.wrap(SECURE_RANDOM.generateSeed(bits/8));
     }
 
     public static SecretKey loadAESKeyFromBase64(String base64Key) {

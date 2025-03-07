@@ -1,15 +1,16 @@
 package com.pcistudio.kms.engine.serialization;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 public enum Serializer {
-    JSON((byte) 1, new GsonDataSerializer()),
-    BSON((byte) 2, new BsonDataSerializer()),
-    AVRO((byte) 3, new AvroDataSerializer()),
-    PROTOBUF((byte) 4, new ProtoDataSerializer());
+    JSON((byte) 1, GsonDataSerializer.class),
+    BSON((byte) 2, BsonDataSerializer.class),
+    AVRO((byte) 3, AvroDataSerializer.class),
+    PROTOBUF((byte) 4, ProtoDataSerializer.class);
 
-    private static final Map<Byte, Serializer> LOOKUP_MAP = new HashMap<>();
+    private static final Map<Byte, Serializer> LOOKUP_MAP = new ConcurrentHashMap<>();
 
     static {
         for (Serializer s : values()) {
@@ -21,11 +22,12 @@ public enum Serializer {
     }
 
     private final byte id;
-    private final DataSerializer dataSerializer;
+    private final Class<? extends DataSerializer> dataSerializerClass;
+    private final AtomicReference<DataSerializer> serializerRef = new AtomicReference<>();
 
-    Serializer(byte id, DataSerializer dataSerializer) {
+    Serializer(byte id, Class<? extends DataSerializer> dataSerializerClass) {
         this.id = id;
-        this.dataSerializer = dataSerializer;
+        this.dataSerializerClass = dataSerializerClass;
     }
 
     public byte getId() {
@@ -33,7 +35,18 @@ public enum Serializer {
     }
 
     public DataSerializer getDataSerializer() {
-        return dataSerializer;
+        serializerRef.updateAndGet(dataSerializer -> {
+            if (dataSerializer == null) {
+                try {
+                    return dataSerializerClass.getDeclaredConstructor().newInstance();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            return dataSerializer;
+        });
+
+        return serializerRef.get();
     }
 
     public static Serializer lookup(byte id) {

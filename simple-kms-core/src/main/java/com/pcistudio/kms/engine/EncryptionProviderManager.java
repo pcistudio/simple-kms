@@ -66,4 +66,10 @@ public class EncryptionProviderManager {
         return provider;
     }
 
+    public void validate() {
+        if (encryptionProviderMap.isEmpty()) {
+            throw new IllegalStateException("None encryption provider defined");
+        }
+    }
+
 }

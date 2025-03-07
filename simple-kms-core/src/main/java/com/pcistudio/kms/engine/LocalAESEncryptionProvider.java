@@ -51,7 +51,7 @@ public final class LocalAESEncryptionProvider implements EncryptionProvider {
         return new LocalAESEncryptionProviderBuilder();
     }
 
-    public static class LocalAESEncryptionProviderBuilder {
+    public static class LocalAESEncryptionProviderBuilder implements EncryptionProviderBuilder {
         @Nullable
         private List<SecretKey> masterKeysHistory;
         @Nullable
