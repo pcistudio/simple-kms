@@ -40,11 +40,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.pcistudio</groupId>
             <artifactId>simple-kms-core</artifactId>
         </dependency>
@@ -53,11 +48,6 @@
             <artifactId>kms</artifactId>
             <version>${awssdk.version}</version>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -82,6 +72,23 @@
             <artifactId>protobuf-java</artifactId>
             <version>${protobuf.version}</version>
             <optional>true</optional>
+        </dependency>
+
+        <!--TEST-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

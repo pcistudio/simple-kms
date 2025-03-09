@@ -2,6 +2,7 @@ package com.pcistudio.kms.autoconfigure;
 
 import com.pcistudio.kms.engine.EncryptionProviderManager;
 import com.pcistudio.kms.engine.LocalAESEncryptionProvider;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -11,6 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 
+@SuppressFBWarnings("UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
 public class LocalEncryptionProviderManagerBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
 
     private final SimpleKmsProperties simpleKmsProperties;

@@ -2,6 +2,7 @@ package com.pcistudio.kms.autoconfigure;
 
 import com.pcistudio.kms.engine.AwsAESEncryptionProvider;
 import com.pcistudio.kms.engine.EncryptionProviderManager;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -10,11 +11,11 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.Ordered;
 import org.springframework.lang.Nullable;
 import software.amazon.awssdk.services.kms.KmsClientBuilder;
 
-public class AwsEncryptionProviderManagerBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware, Ordered {
+@SuppressFBWarnings("UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
+public class AwsEncryptionProviderManagerBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
 
     private final SimpleKmsProperties simpleKmsProperties;
     private final ObjectProvider<KmsClientBuilder> kmsClientBuilder;
@@ -47,10 +48,5 @@ public class AwsEncryptionProviderManagerBeanPostProcessor implements BeanPostPr
             }
         }
         return bean;
-    }
-
-    @Override
-    public int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE ;
     }
 }

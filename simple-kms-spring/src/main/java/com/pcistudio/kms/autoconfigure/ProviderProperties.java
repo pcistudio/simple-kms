@@ -140,7 +140,7 @@ public class ProviderProperties {
         private int keySize = 256;
 
         public List<String> getMasterKeys() {
-            return masterKeys;
+            return new ArrayList<>(masterKeys);
         }
 
         public List<SecretKey> getMasterSecretKeys() {
@@ -152,7 +152,7 @@ public class ProviderProperties {
 
 
         public Local setMasterKeys(List<String> masterKeys) {
-            this.masterKeys = masterKeys;
+            this.masterKeys = new ArrayList<>(masterKeys);
             return this;
         }
 

@@ -40,7 +40,7 @@ public enum Serializer {
                 try {
                     return dataSerializerClass.getDeclaredConstructor().newInstance();
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new IllegalArgumentException("Error creating object for " + dataSerializerClass.getCanonicalName(), e);
                 }
             }
             return dataSerializer;

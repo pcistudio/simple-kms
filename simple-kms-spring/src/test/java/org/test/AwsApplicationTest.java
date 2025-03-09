@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.testcontainers.junit.jupiter.EnabledIfDockerAvailable;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(classes = Application.class)
 @ActiveProfiles("docker-aws")
 @Import(KmsClientBuilderConfiguration.class)
+@EnabledIfDockerAvailable
 class AwsApplicationTest {
 
     @Autowired

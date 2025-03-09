@@ -18,12 +18,8 @@ public class SimpleKmsProperties {
 
     private Map<String, ProviderProperties> providers = new HashMap<>();
 
-    public Map<String, ProviderProperties> getProviders() {
-        return providers;
-    }
-
     public SimpleKmsProperties setProviders(Map<String, ProviderProperties> providers) {
-        this.providers = providers;
+        this.providers = new HashMap<>(providers);
         if (providers.size() == 1) {
             providers.entrySet()
                     .stream()
@@ -34,7 +30,7 @@ public class SimpleKmsProperties {
         return this;
     }
 
-    public List<BuilderProperties<LocalAESEncryptionProvider.LocalAESEncryptionProviderBuilder>> initializeLocalBuilder() {
+    List<BuilderProperties<LocalAESEncryptionProvider.LocalAESEncryptionProviderBuilder>> initializeLocalBuilder() {
         checkDefaultProviders();
         return providers.entrySet()
                 .stream()
@@ -44,7 +40,7 @@ public class SimpleKmsProperties {
                 .toList();
     }
 
-    public List<BuilderProperties<AwsAESEncryptionProvider.AwsAESEncryptionProviderBuilder>> initializeAwsBuilder() {
+    List<BuilderProperties<AwsAESEncryptionProvider.AwsAESEncryptionProviderBuilder>> initializeAwsBuilder() {
         checkDefaultProviders();
         return providers.entrySet()
                 .stream()
@@ -95,7 +91,7 @@ public class SimpleKmsProperties {
         private int keySize = 256;
 
         public List<String> getMasterKeys() {
-            return masterKeys;
+            return new ArrayList<>(masterKeys);
         }
 
         public List<SecretKey> getMasterSecretKeys() {
@@ -107,7 +103,7 @@ public class SimpleKmsProperties {
 
 
         public Local setMasterKeys(List<String> masterKeys) {
-            this.masterKeys = masterKeys;
+            this.masterKeys = new ArrayList<>(masterKeys);
             return this;
         }
 
@@ -121,7 +117,7 @@ public class SimpleKmsProperties {
         }
     }
 
-    public record BuilderProperties<T extends EncryptionProviderBuilder>(
+    record BuilderProperties<T extends EncryptionProviderBuilder>(
             T builder,
             ProviderProperties properties) {
     }

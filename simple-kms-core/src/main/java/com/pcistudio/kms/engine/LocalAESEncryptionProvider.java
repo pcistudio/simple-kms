@@ -81,6 +81,7 @@ public final class LocalAESEncryptionProvider implements EncryptionProvider {
             return this;
         }
 
+        @Override
         public LocalAESEncryptionProvider build() {
             return new LocalAESEncryptionProvider(this);
         }

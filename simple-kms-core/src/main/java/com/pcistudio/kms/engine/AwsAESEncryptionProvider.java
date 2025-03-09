@@ -88,6 +88,7 @@ public final class AwsAESEncryptionProvider implements EncryptionProvider {
             return this;
         }
 
+        @Override
         public AwsAESEncryptionProvider build() {
             return new AwsAESEncryptionProvider(this);
         }
