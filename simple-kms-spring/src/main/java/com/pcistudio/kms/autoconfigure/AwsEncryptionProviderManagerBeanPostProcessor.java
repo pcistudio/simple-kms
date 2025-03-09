@@ -10,10 +10,11 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.Ordered;
 import org.springframework.lang.Nullable;
 import software.amazon.awssdk.services.kms.KmsClientBuilder;
 
-public class AwsEncryptionProviderManagerBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
+public class AwsEncryptionProviderManagerBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware, Ordered {
 
     private final SimpleKmsProperties simpleKmsProperties;
     private final ObjectProvider<KmsClientBuilder> kmsClientBuilder;
@@ -46,5 +47,10 @@ public class AwsEncryptionProviderManagerBeanPostProcessor implements BeanPostPr
             }
         }
         return bean;
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE ;
     }
 }

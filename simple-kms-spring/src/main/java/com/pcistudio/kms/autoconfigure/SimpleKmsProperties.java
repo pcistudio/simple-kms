@@ -63,7 +63,7 @@ public class SimpleKmsProperties {
                 .filter(entry -> entry.getValue().isDefaultProvider())
                 .map(Map.Entry::getValue)
                 .toList();
-        Assert.notEmpty(defaultProvider, "No default provider found");
+        Assert.notEmpty(defaultProvider, "No default-provider found");
         Assert.isTrue(defaultProvider.size() == 1, "More than one default provider found");
     }
 

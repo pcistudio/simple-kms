@@ -4,6 +4,7 @@ import com.pcistudio.kms.engine.EncryptionEngine;
 import com.pcistudio.kms.engine.EncryptionProvider;
 import com.pcistudio.kms.engine.EncryptionProviderManager;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -14,9 +15,9 @@ import software.amazon.awssdk.services.kms.KmsClientBuilder;
 
 import java.util.List;
 
-@Configuration
+//@Configuration
 //TODO change to AutoConfiguration
-//@AutoConfiguration
+@AutoConfiguration
 @EnableConfigurationProperties(SimpleKmsProperties.class)
 public class SimpleKmsAutoConfiguration {
 
@@ -34,7 +35,7 @@ public class SimpleKmsAutoConfiguration {
     static class Local {
 
         @Bean
-        static LocalEncryptionProviderManagerBeanPostProcessor localEncryptionProviderManagerBeanPostProcessor(SimpleKmsProperties simpleKmsProperties) {
+        LocalEncryptionProviderManagerBeanPostProcessor localEncryptionProviderManagerBeanPostProcessor(SimpleKmsProperties simpleKmsProperties) {
             return new LocalEncryptionProviderManagerBeanPostProcessor(simpleKmsProperties);
         }
     }
