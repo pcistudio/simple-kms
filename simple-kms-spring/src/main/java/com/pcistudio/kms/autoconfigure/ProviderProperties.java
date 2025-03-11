@@ -93,11 +93,6 @@ public class ProviderProperties {
         return type == ProviderType.AWS;
     }
 
-//    public boolean validate() {
-//        Assert.notNull(type, "Missing provider type");
-//        return true;
-//    }
-
     public LocalAESEncryptionProvider.LocalAESEncryptionProviderBuilder initializeLocalBuilder() {
         Assert.notNull(type, "Missing provider type");
         Assert.isTrue(isLocal(), "Wrong provider type=" + type);
