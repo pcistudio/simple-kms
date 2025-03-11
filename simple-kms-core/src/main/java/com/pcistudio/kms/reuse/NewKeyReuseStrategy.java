@@ -1,6 +1,8 @@
 package com.pcistudio.kms.reuse;
 
 import com.pcistudio.kms.model.GeneratedKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.Supplier;
 
@@ -10,6 +12,7 @@ public class NewKeyReuseStrategy implements KeyReuseStrategy {
 
     protected NewKeyReuseStrategy(Supplier<GeneratedKey> keySupplier) {
         this.keySupplier = keySupplier;
+
     }
 
     @Override
@@ -18,6 +21,8 @@ public class NewKeyReuseStrategy implements KeyReuseStrategy {
     }
 
     public static class ReuseStrategyBuilder implements KeyReuseStrategyBuilder<NewKeyReuseStrategy, ReuseStrategyBuilder> {
+
+        private static final Logger log = LoggerFactory.getLogger(ReuseStrategyBuilder.class);
         private Supplier<GeneratedKey> keySupplier;
 
         @Override
@@ -38,7 +43,9 @@ public class NewKeyReuseStrategy implements KeyReuseStrategy {
 
         @Override
         public NewKeyReuseStrategy build() {
-            return new NewKeyReuseStrategy(keySupplier);
+            NewKeyReuseStrategy newKeyReuseStrategy = new NewKeyReuseStrategy(keySupplier);
+            log.info("Created NewKeyReuseStrategy");
+            return newKeyReuseStrategy;
         }
     }
 }

@@ -4,6 +4,8 @@ import com.pcistudio.kms.DEKEncryptionStrategy;
 import com.pcistudio.kms.aws.AwsKmsService;
 import com.pcistudio.kms.engine.serialization.Serializer;
 import com.pcistudio.kms.local.AESEncryptionService;
+import com.pcistudio.kms.reuse.KeyReuseStrategy;
+import com.pcistudio.kms.reuse.KeyReuseStrategyBuilder;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import software.amazon.awssdk.services.kms.KmsClientBuilder;
 import software.amazon.awssdk.services.kms.model.DataKeySpec;
@@ -23,13 +25,13 @@ public final class AwsAESEncryptionProvider implements EncryptionProvider {
         KmsClientBuilder kmsClientBuilder = Objects.requireNonNull(builder.kmsClientBuilder, "kmsClient cannot be null");
         DataKeySpec dataKeySpec = Objects.requireNonNull(builder.dataKeySpec, "dataKeySpec cannot be null");
 
-
         AESEncryptionService aesEncryptionService = new AESEncryptionService(Objects.requireNonNull(ivSupplier));
         AwsKmsService awsKmsService = new AwsKmsService(keyId, kmsClientBuilder, dataKeySpec);
         encryptionDescriptor = new EncryptionDescriptor(
                 new DEKEncryptionStrategy(
                         awsKmsService,
-                        aesEncryptionService
+                        aesEncryptionService,
+                        Objects.requireNonNullElseGet(builder.reuseStrategyBuilder, KeyReuseStrategy::builder)
                 ),
                 serializer
         );
@@ -62,6 +64,8 @@ public final class AwsAESEncryptionProvider implements EncryptionProvider {
         private KmsClientBuilder kmsClientBuilder;
         @Nullable
         private Serializer serializer;
+        @Nullable
+        private KeyReuseStrategyBuilder<?, ?> reuseStrategyBuilder;
 
         public AwsAESEncryptionProviderBuilder keyId(String keyId) {
             this.keyId = keyId;
@@ -85,6 +89,11 @@ public final class AwsAESEncryptionProvider implements EncryptionProvider {
 
         public AwsAESEncryptionProviderBuilder dataKeySpec(DataKeySpec dataKeySpec) {
             this.dataKeySpec = dataKeySpec;
+            return this;
+        }
+
+        public AwsAESEncryptionProviderBuilder reuseStrategyBuilder(KeyReuseStrategyBuilder<?, ?> reuseStrategyBuilder) {
+            this.reuseStrategyBuilder = reuseStrategyBuilder;
             return this;
         }
 

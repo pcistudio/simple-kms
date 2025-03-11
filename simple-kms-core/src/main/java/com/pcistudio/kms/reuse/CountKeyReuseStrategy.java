@@ -56,7 +56,10 @@ public final class CountKeyReuseStrategy extends AbstractKeyReuseStrategy {
 
         @Override
         public CountKeyReuseStrategy build() {
-            return new CountKeyReuseStrategy(this);
+            CountKeyReuseStrategy countKeyReuseStrategy = new CountKeyReuseStrategy(this);
+            log.info("Created CountKeyReuseStrategy");
+            return countKeyReuseStrategy;
+
         }
     }
 }

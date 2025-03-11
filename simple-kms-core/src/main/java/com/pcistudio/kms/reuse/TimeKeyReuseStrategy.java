@@ -55,7 +55,9 @@ public final class TimeKeyReuseStrategy extends AbstractKeyReuseStrategy {
 
         @Override
         public TimeKeyReuseStrategy build() {
-            return new TimeKeyReuseStrategy(this);
+            TimeKeyReuseStrategy timeKeyReuseStrategy = new TimeKeyReuseStrategy(this);
+            log.info("Created TimeKeyReuseStrategy");
+            return timeKeyReuseStrategy;
         }
     }
 }

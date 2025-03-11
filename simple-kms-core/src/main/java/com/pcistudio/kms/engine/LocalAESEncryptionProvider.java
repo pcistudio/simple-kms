@@ -4,6 +4,8 @@ import com.pcistudio.kms.DEKEncryptionStrategy;
 import com.pcistudio.kms.engine.serialization.Serializer;
 import com.pcistudio.kms.local.AESEncryptionService;
 import com.pcistudio.kms.local.LocalKmsService;
+import com.pcistudio.kms.reuse.KeyReuseStrategy;
+import com.pcistudio.kms.reuse.KeyReuseStrategyBuilder;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 import javax.crypto.SecretKey;
@@ -23,13 +25,14 @@ public final class LocalAESEncryptionProvider implements EncryptionProvider {
         List<SecretKey> masterKeysHistory = Objects.requireNonNull(builder.masterKeysHistory, "masterKeysHistory cannot be null");
         Serializer serializer = Objects.requireNonNull(builder.serializer, "serializer cannot be null");
 
-
         AESEncryptionService aesEncryptionService = new AESEncryptionService(Objects.requireNonNull(ivSupplier));
         LocalKmsService localKmsService = new LocalKmsService(masterKeysHistory, aesEncryptionService, Objects.requireNonNull(keySupplier));
+
         encryptionDescriptor = new EncryptionDescriptor(
                 new DEKEncryptionStrategy(
                         localKmsService,
-                        aesEncryptionService
+                        aesEncryptionService,
+                        Objects.requireNonNullElseGet(builder.reuseStrategyBuilder, KeyReuseStrategy::builder)
                 ),
                 serializer
         );
@@ -60,6 +63,8 @@ public final class LocalAESEncryptionProvider implements EncryptionProvider {
         private Supplier<SecretKey> keySupplier;
         @Nullable
         private Serializer serializer;
+        @Nullable
+        private KeyReuseStrategyBuilder<?, ?> reuseStrategyBuilder;
 
         public LocalAESEncryptionProviderBuilder masterKeysHistory(List<SecretKey> masterKeysHistory) {
             this.masterKeysHistory = new ArrayList<>(masterKeysHistory);
@@ -78,6 +83,11 @@ public final class LocalAESEncryptionProvider implements EncryptionProvider {
 
         public LocalAESEncryptionProviderBuilder serializer(Serializer serializer) {
             this.serializer = serializer;
+            return this;
+        }
+
+        public LocalAESEncryptionProviderBuilder reuseStrategyBuilder(KeyReuseStrategyBuilder<?, ?> reuseStrategyBuilder) {
+            this.reuseStrategyBuilder = reuseStrategyBuilder;
             return this;
         }
 

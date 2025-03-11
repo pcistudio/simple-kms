@@ -3,11 +3,15 @@ package com.pcistudio.kms.autoconfigure;
 import com.pcistudio.kms.engine.AwsAESEncryptionProvider;
 import com.pcistudio.kms.engine.LocalAESEncryptionProvider;
 import com.pcistudio.kms.engine.serialization.Serializer;
+import com.pcistudio.kms.reuse.KeyReuseStrategy;
+import com.pcistudio.kms.reuse.KeyReuseStrategyBuilder;
 import com.pcistudio.kms.utils.KeyGenerationUtil;
+import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import software.amazon.awssdk.services.kms.model.DataKeySpec;
 
 import javax.crypto.SecretKey;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +25,11 @@ public class ProviderProperties {
     private int ivSize;
     private Serializer serializer = Serializer.JSON;
 
+
     private final Aws aws = new Aws();
     private final Local local = new Local();
+
+    private final KeyReuse keyReuse = new KeyReuse();
 
     public Aws getAws() {
         return aws;
@@ -98,6 +105,7 @@ public class ProviderProperties {
                 .ivSupplier(KeyGenerationUtil.ivSupplier(getIvSize()))
                 .serializer(getSerializer())
                 .masterKeysHistory(getLocal().getMasterSecretKeys())
+                .reuseStrategyBuilder(keyReuse.createReuseBuilder())
                 .keySupplier(() -> generateKeyAES(getLocal().getKeySize()));
     }
 
@@ -108,6 +116,7 @@ public class ProviderProperties {
                 .ivSupplier(KeyGenerationUtil.ivSupplier(getIvSize()))
                 .serializer(getSerializer())
                 .keyId(getAws().getKey())
+                .reuseStrategyBuilder(keyReuse.createReuseBuilder())
                 .dataKeySpec(getAws().getDataKeySpec());
     }
 
@@ -164,6 +173,45 @@ public class ProviderProperties {
             this.keySize = keySize;
             return this;
         }
+    }
+
+    public static class KeyReuse {
+        private Integer maxReuse = null;
+        private Integer generationIntervalMs= null;
+
+        public int getMaxReuse() {
+            return maxReuse;
+        }
+
+        public KeyReuse setMaxReuse(int maxReuse) {
+            this.maxReuse = maxReuse;
+            return this;
+        }
+
+        public int getGenerationIntervalMs() {
+            return generationIntervalMs;
+        }
+
+        public KeyReuse setGenerationIntervalMs(int generationIntervalMs) {
+            this.generationIntervalMs = generationIntervalMs;
+            return this;
+        }
+
+        @Nullable
+        KeyReuseStrategyBuilder<?, ?> createReuseBuilder() {
+            if (maxReuse != null && generationIntervalMs != null) {
+                throw new IllegalArgumentException("Properties maxReuse and generationIntervalMs are mutually exclusive");
+            }
+
+            if (maxReuse != null) {
+                return KeyReuseStrategy.builder().countBase().maxReuseCount(maxReuse);
+            } else if (generationIntervalMs != null) {
+                return KeyReuseStrategy.builder().timeBase().generationInterval(Duration.ofMillis(generationIntervalMs));
+            } else {
+                return null;
+            }
+        }
+
     }
 
     public enum ProviderType {

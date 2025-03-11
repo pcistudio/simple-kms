@@ -4,19 +4,16 @@ import com.pcistudio.kms.model.EncryptionData;
 import com.pcistudio.kms.model.GeneratedKey;
 import com.pcistudio.kms.reuse.KeyReuseStrategy;
 import com.pcistudio.kms.reuse.KeyReuseStrategyBuilder;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.SecretKey;
 import java.nio.ByteBuffer;
 
+@Slf4j
 public class DEKEncryptionStrategy implements EncryptionStrategy {
     private final KmsService kmsService;
     private final EncryptionService encryptionService;
     private final KeyReuseStrategy keyReuseStrategy;
-
-    //TODO Remove this constructor in favor of the other
-    public DEKEncryptionStrategy(KmsService kmsService, EncryptionService encryptionService) {
-        this(kmsService,encryptionService, KeyReuseStrategy.builder());
-    }
 
     public DEKEncryptionStrategy(KmsService kmsService, EncryptionService encryptionService, KeyReuseStrategyBuilder<? extends KeyReuseStrategy, ? extends KeyReuseStrategyBuilder> reuseStrategyBuilder) {
         this.kmsService = kmsService;
