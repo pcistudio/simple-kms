@@ -29,5 +29,7 @@
         <appender-ref ref="STDOUT" />
     </root>
 
-    <logger name="com.pcistudio.kms" level="trace" />
+<!--    <logger name="com.pcistudio.kms" level="trace" />-->
+    <logger name="com.pcistudio.kms.reuse" level="trace" />
+
 </configuration>

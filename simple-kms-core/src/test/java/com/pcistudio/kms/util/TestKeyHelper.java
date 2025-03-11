@@ -3,6 +3,8 @@ package com.pcistudio.kms.util;
 import com.pcistudio.kms.engine.EncryptionProvider;
 import com.pcistudio.kms.engine.LocalAESEncryptionProvider;
 import com.pcistudio.kms.engine.serialization.Serializer;
+import com.pcistudio.kms.local.AESEncryptionService;
+import com.pcistudio.kms.local.LocalKmsService;
 
 import javax.crypto.SecretKey;
 import java.nio.ByteBuffer;
@@ -24,6 +26,10 @@ public interface TestKeyHelper {
     SecretKey currentMasterKey();
 
     void rotateKey();
+
+    default LocalKmsService kmsService() {
+        return new LocalKmsService(getMasterKeys(), new AESEncryptionService(ivGenerator()), getKEKSupplier());
+    }
 
     default EncryptionProvider localProvider(Serializer serializer) {
         return LocalAESEncryptionProvider.builder()

@@ -4,6 +4,8 @@ import com.pcistudio.kms.DEKEncryptionStrategy;
 import com.pcistudio.kms.aws.AwsKmsService;
 import com.pcistudio.kms.engine.serialization.Serializer;
 import com.pcistudio.kms.local.AESEncryptionService;
+import com.pcistudio.kms.reuse.KeyReuseStrategy;
+import com.pcistudio.kms.reuse.KeyReuseStrategyBuilder;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import software.amazon.awssdk.services.kms.KmsClientBuilder;
 import software.amazon.awssdk.services.kms.model.DataKeySpec;
@@ -23,18 +25,18 @@ public final class AwsAESEncryptionProvider implements EncryptionProvider {
         KmsClientBuilder kmsClientBuilder = Objects.requireNonNull(builder.kmsClientBuilder, "kmsClient cannot be null");
         DataKeySpec dataKeySpec = Objects.requireNonNull(builder.dataKeySpec, "dataKeySpec cannot be null");
 
-
         AESEncryptionService aesEncryptionService = new AESEncryptionService(Objects.requireNonNull(ivSupplier));
         AwsKmsService awsKmsService = new AwsKmsService(keyId, kmsClientBuilder, dataKeySpec);
         encryptionDescriptor = new EncryptionDescriptor(
                 new DEKEncryptionStrategy(
                         awsKmsService,
-                        aesEncryptionService
+                        aesEncryptionService,
+                        Objects.requireNonNullElseGet(builder.reuseStrategyBuilder, KeyReuseStrategy::builder)
                 ),
                 serializer
         );
 
-        name = "AWS/%s/IV%d/%s".formatted(dataKeySpec.name(), ivSupplier.get().capacity() * 8, serializer.name());
+        name = "AWS/%s/IV%d/%s@%s".formatted(dataKeySpec.name(), ivSupplier.get().capacity() * 8, serializer.name(), keyId.substring(0, Math.min(keyId.length(), 8)));
     }
 
     @Override
@@ -51,7 +53,7 @@ public final class AwsAESEncryptionProvider implements EncryptionProvider {
         return new AwsAESEncryptionProviderBuilder();
     }
 
-    public static class AwsAESEncryptionProviderBuilder {
+    public static class AwsAESEncryptionProviderBuilder implements EncryptionProviderBuilder {
         @Nullable
         private String keyId;
         @Nullable
@@ -62,6 +64,8 @@ public final class AwsAESEncryptionProvider implements EncryptionProvider {
         private KmsClientBuilder kmsClientBuilder;
         @Nullable
         private Serializer serializer;
+        @Nullable
+        private KeyReuseStrategyBuilder<?, ?> reuseStrategyBuilder;
 
         public AwsAESEncryptionProviderBuilder keyId(String keyId) {
             this.keyId = keyId;
@@ -88,6 +92,12 @@ public final class AwsAESEncryptionProvider implements EncryptionProvider {
             return this;
         }
 
+        public AwsAESEncryptionProviderBuilder reuseStrategyBuilder(KeyReuseStrategyBuilder<?, ?> reuseStrategyBuilder) {
+            this.reuseStrategyBuilder = reuseStrategyBuilder;
+            return this;
+        }
+
+        @Override
         public AwsAESEncryptionProvider build() {
             return new AwsAESEncryptionProvider(this);
         }

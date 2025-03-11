@@ -2,17 +2,25 @@ package com.pcistudio.kms;
 
 import com.pcistudio.kms.model.EncryptionData;
 import com.pcistudio.kms.model.GeneratedKey;
+import com.pcistudio.kms.reuse.KeyReuseStrategy;
+import com.pcistudio.kms.reuse.KeyReuseStrategyBuilder;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.SecretKey;
 import java.nio.ByteBuffer;
 
+@Slf4j
 public class DEKEncryptionStrategy implements EncryptionStrategy {
     private final KmsService kmsService;
     private final EncryptionService encryptionService;
+    private final KeyReuseStrategy keyReuseStrategy;
 
-    public DEKEncryptionStrategy(KmsService kmsService, EncryptionService encryptionService) {
+    public DEKEncryptionStrategy(KmsService kmsService, EncryptionService encryptionService, KeyReuseStrategyBuilder<? extends KeyReuseStrategy, ? extends KeyReuseStrategyBuilder> reuseStrategyBuilder) {
         this.kmsService = kmsService;
         this.encryptionService = encryptionService;
+        this.keyReuseStrategy = reuseStrategyBuilder
+                .keySupplier(this.kmsService::generateKey)
+                .build();
     }
 
     /**
@@ -24,9 +32,9 @@ public class DEKEncryptionStrategy implements EncryptionStrategy {
      */
     @Override
     public EncryptionData encrypt(ByteBuffer data) {
-        GeneratedKey generatedKey = kmsService.generateKey();
-        ByteBuffer encryptedData = encryptionService.encrypt(generatedKey.getKey(), data);
-        return new EncryptionData(generatedKey.getEncryptedKey(), encryptedData);
+        GeneratedKey generatedKey = keyReuseStrategy.generateKey();
+        ByteBuffer encryptedData = encryptionService.encrypt(generatedKey.key(), data);
+        return new EncryptionData(generatedKey.encryptedKey(), encryptedData);
     }
 
     @Override
@@ -34,6 +42,5 @@ public class DEKEncryptionStrategy implements EncryptionStrategy {
         SecretKey secretKey = kmsService.decryptKey(encryptionData.encryptedKey());
         return encryptionService.decrypt(secretKey, encryptionData.encryptedData());
     }
-
 
 }

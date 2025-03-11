@@ -3,6 +3,7 @@ package com.pcistudio.kms;
 import com.pcistudio.kms.local.AESEncryptionService;
 import com.pcistudio.kms.local.LocalKmsService;
 import com.pcistudio.kms.model.EncryptionData;
+import com.pcistudio.kms.reuse.KeyReuseStrategy;
 import com.pcistudio.kms.util.TestKeyHelper;
 import com.pcistudio.kms.utils.KeyGenerationUtil;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,7 +29,11 @@ class DEKEncryptionStrategyTest {
         SecretKey masterKey = testKeyHelper.currentMasterKey();
         log.info("masterKey={}", KeyGenerationUtil.keyToBase64(masterKey));
         AESEncryptionService aesEncryptionService = new AESEncryptionService(testKeyHelper.ivGenerator());
-        DEKEncryptionStrategy kekStrategy = new DEKEncryptionStrategy(new LocalKmsService(List.of(masterKey), aesEncryptionService, testKeyHelper.getKEKSupplier()), aesEncryptionService);
+        DEKEncryptionStrategy kekStrategy = new DEKEncryptionStrategy(
+                new LocalKmsService(List.of(masterKey), aesEncryptionService, testKeyHelper.getKEKSupplier()),
+                aesEncryptionService,
+                KeyReuseStrategy.builder()
+        );
 
         EncryptionData encryptionData = kekStrategy.encrypt(ByteBuffer.wrap("test".getBytes()));
         assertNotNull(encryptionData);
@@ -43,7 +48,11 @@ class DEKEncryptionStrategyTest {
         SecretKey masterKey = testKeyHelper.currentMasterKey();
         log.info("masterKey={}", KeyGenerationUtil.keyToBase64(masterKey));
         AESEncryptionService aesEncryptionService = new AESEncryptionService(testKeyHelper.ivGenerator());
-        DEKEncryptionStrategy kekStrategy = new DEKEncryptionStrategy(new LocalKmsService(List.of(masterKey), aesEncryptionService, testKeyHelper.getKEKSupplier()), aesEncryptionService);
+        DEKEncryptionStrategy kekStrategy = new DEKEncryptionStrategy(
+                new LocalKmsService(List.of(masterKey), aesEncryptionService, testKeyHelper.getKEKSupplier()),
+                aesEncryptionService,
+                KeyReuseStrategy.builder()
+        );
 
         List<EncryptionData> list = new ArrayList<>();
         for (int i = 0; i < 100; i++) {

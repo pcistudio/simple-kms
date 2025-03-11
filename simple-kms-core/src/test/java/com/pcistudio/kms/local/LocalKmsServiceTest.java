@@ -26,10 +26,10 @@ class LocalKmsServiceTest {
         LocalKmsService kmsService = new LocalKmsService(List.of(masterKey), new AESEncryptionService(testKeyHelper.ivGenerator()), testKeyHelper.getKEKSupplier());
 
         GeneratedKey generatedKey = kmsService.generateKey();
-        assertNotNull(generatedKey.getKey());
-        assertNotNull(generatedKey.getEncryptedKey());
+        assertNotNull(generatedKey.key());
+        assertNotNull(generatedKey.encryptedKey());
 
-        assertArrayEquals(generatedKey.getKey().getEncoded(), kmsService.decrypt(generatedKey.getEncryptedKey()).array());
+        assertArrayEquals(generatedKey.key().getEncoded(), kmsService.decrypt(generatedKey.encryptedKey()).array());
     }
 
     @ParameterizedTest
@@ -39,17 +39,17 @@ class LocalKmsServiceTest {
         LocalKmsService kmsService = new LocalKmsService(List.of(masterKey), new AESEncryptionService(testKeyHelper.ivGenerator()), testKeyHelper.getKEKSupplier());
 
         GeneratedKey generatedKey = kmsService.generateKey();
-        assertNotNull(generatedKey.getKey());
-        assertNotNull(generatedKey.getEncryptedKey());
+        assertNotNull(generatedKey.key());
+        assertNotNull(generatedKey.encryptedKey());
 
-        assertArrayEquals(generatedKey.getKey().getEncoded(), kmsService.decrypt(generatedKey.getEncryptedKey()).array());
+        assertArrayEquals(generatedKey.key().getEncoded(), kmsService.decrypt(generatedKey.encryptedKey()).array());
 
         SecretKey masterKey2 = KeyGenerationUtil.generateKeyAES(new SecureRandom(), 256);
         kmsService.liveRotation(masterKey2);
         GeneratedKey generatedKey2 = kmsService.generateKey();
-        assertArrayEquals(generatedKey2.getKey().getEncoded(), kmsService.decrypt(generatedKey2.getEncryptedKey()).array());
+        assertArrayEquals(generatedKey2.key().getEncoded(), kmsService.decrypt(generatedKey2.encryptedKey()).array());
 
-        generatedKey.getEncryptedKey().rewind();
-        assertArrayEquals(generatedKey.getKey().getEncoded(), kmsService.decrypt(generatedKey.getEncryptedKey()).array());
+        generatedKey.encryptedKey().rewind();
+        assertArrayEquals(generatedKey.key().getEncoded(), kmsService.decrypt(generatedKey.encryptedKey()).array());
     }
 }

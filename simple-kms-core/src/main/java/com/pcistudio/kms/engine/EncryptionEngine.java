@@ -1,7 +1,7 @@
 package com.pcistudio.kms.engine;
 
-import com.pcistudio.kms.model.EncryptionData;
 import com.pcistudio.kms.engine.serialization.Serializer;
+import com.pcistudio.kms.model.EncryptionData;
 import org.slf4j.Logger;
 
 import java.nio.ByteBuffer;
@@ -42,11 +42,17 @@ public class EncryptionEngine {
             logger.debug("Encrypting data with provider={}, serializer={}, serializerId={} result size={}",
                     encryptionProvider.getName(), encryptionDescriptor.getSerializer().name(), encryptionDescriptor.getSerializerId(), byteBuffer.capacity());
         }
+
         if (logger.isTraceEnabled()) {
-            ByteBuffer encryptedData = Serializer.JSON.getDataSerializer()
-                    .serialize(SecureEnvelope.of(encryptionProvider.getName(), encryptionData));
-            logger.trace("Encrypting data with provider {} and data {}", encryptionProvider.getName(), new String(encryptedData.array(), StandardCharsets.UTF_8));
+            if (encryptionDescriptor.getSerializer() != Serializer.JSON) {
+                encryptionData.encryptedData().rewind();
+                encryptionData.encryptedKey().rewind();
+                serialize = Serializer.JSON.getDataSerializer()
+                        .serialize(SecureEnvelope.of(encryptionProvider.getName(), encryptionData));
+            }
+            logger.trace("Encrypting data with provider {} and data {}", encryptionProvider.getName(), new String(serialize.array(), StandardCharsets.UTF_8));
         }
+
         byteBuffer.flip();
         return byteBuffer;
     }

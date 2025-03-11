@@ -34,9 +34,7 @@ public class AwsKmsService implements KmsService {
         ByteBuffer byteBuffer = ByteBuffer.wrap(generateDataKeyResponse.ciphertextBlob().asByteArrayUnsafe());
         SecretKeySpec key = new SecretKeySpec(generateDataKeyResponse.plaintext().asByteArrayUnsafe(), getKeyAlgorithm());
 
-        return new GeneratedKey()
-                .setKey(key)
-                .setEncryptedKey(byteBuffer);
+        return new GeneratedKey(key, byteBuffer);
     }
 
     @Override

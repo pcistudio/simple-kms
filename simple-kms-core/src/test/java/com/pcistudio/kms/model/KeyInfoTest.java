@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.crypto.SecretKey;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -15,7 +14,7 @@ class KeyInfoTest {
     private static final Logger log = LoggerFactory.getLogger(KeyInfoTest.class);
 
     @Test
-    void testToString() throws NoSuchAlgorithmException {
+    void testToString() {
         SecretKey secretKey = KeyGenerationUtil.generateKeyAES(new SecureRandom(), 256);
         KeyInfo keyInfo = new KeyInfo(1, secretKey);
         log.info("key: {}", keyInfo);

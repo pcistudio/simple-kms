@@ -5,22 +5,18 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.nio.ByteBuffer;
 
-//@SuppressFBWarnings({"EI_EXPOSE_REP2", "EI_EXPOSE_REP"})
-//public record ProviderEncryptionData(String p, ByteBuffer ek, ByteBuffer ed) {
-//    public static ProviderEncryptionData of(String provider, EncryptionData encryptionData) {
-//        return new ProviderEncryptionData(provider, encryptionData.encryptedKey(), encryptionData.encryptedData());
-//    }
-//}
 @SuppressFBWarnings("EI_EXPOSE_BUF")
 public class SecureEnvelope {
     private String p;
     private byte[] ek;
     private byte[] ed;
 
-    public SecureEnvelope(String p, ByteBuffer ek, ByteBuffer ed) {
+    public SecureEnvelope(String p, ByteBuffer ekBuffer, ByteBuffer edBuffer) {
         this.p = p;
-        this.ek = ek.array();
-        this.ed = ed.array();
+        this.ek = new byte[ekBuffer.remaining()];
+        ekBuffer.get(this.ek);
+        this.ed = new byte[edBuffer.remaining()];
+        edBuffer.get(this.ed);
     }
 
     public String getP() {
@@ -36,3 +32,4 @@ public class SecureEnvelope {
         return new SecureEnvelope(provider, encryptionData.encryptedKey(), encryptionData.encryptedData());
     }
 }
+
