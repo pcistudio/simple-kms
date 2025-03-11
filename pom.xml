@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>simple-kms</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.3</version>
     <packaging>pom</packaging>
     <name>Simple kms</name>
     <description>
@@ -34,7 +34,7 @@
         <url>https://github.com:pcistudio/simple-kms.git</url>
         <connection>scm:git:git://github.com:pcistudio/simple-kms.git</connection>
         <developerConnection>scm:git:git@github.com:pcistudio/simple-kms.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>v0.0.3</tag>
     </scm>
 
     <developers>
@@ -61,12 +61,12 @@
             <dependency>
                 <groupId>com.pcistudio</groupId>
                 <artifactId>simple-kms-core</artifactId>
-                <version>0.0.3-SNAPSHOT</version>
+                <version>0.0.3</version>
             </dependency>
             <dependency>
                 <groupId>com.pcistudio</groupId>
                 <artifactId>simple-kms-spring</artifactId>
-                <version>0.0.3-SNAPSHOT</version>
+                <version>0.0.3</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
