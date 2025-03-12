@@ -4,6 +4,8 @@ import com.pcistudio.kms.engine.AwsAESEncryptionProvider;
 import com.pcistudio.kms.engine.EncryptionProviderBuilder;
 import com.pcistudio.kms.engine.LocalAESEncryptionProvider;
 import com.pcistudio.kms.utils.KeyGenerationUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.Assert;
 import software.amazon.awssdk.services.kms.model.DataKeySpec;
@@ -16,6 +18,7 @@ import java.util.*;
 )
 public class SimpleKmsProperties {
 
+    private static final Logger log = LoggerFactory.getLogger(SimpleKmsProperties.class);
     private Map<String, ProviderProperties> providers = new HashMap<>();
 
     public SimpleKmsProperties setProviders(Map<String, ProviderProperties> providers) {
@@ -52,8 +55,11 @@ public class SimpleKmsProperties {
 
     private void checkDefaultProviders() {
         Assert.notNull(providers, "Providers cannot be null");
-        Assert.notEmpty(providers, "No providers found");
-
+        if (providers.isEmpty()) {
+            log.warn("No providers found");
+            return;
+        }
+        
         var defaultProvider = providers.entrySet()
                 .stream()
                 .filter(entry -> entry.getValue().isDefaultProvider())
