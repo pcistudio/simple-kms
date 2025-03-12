@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.pcistudio</groupId>
         <artifactId>simple-kms</artifactId>
-        <version>0.0.4-SNAPSHOT</version>
+        <version>0.0.4</version>
     </parent>
 
     <artifactId>simple-kms-spring</artifactId>
