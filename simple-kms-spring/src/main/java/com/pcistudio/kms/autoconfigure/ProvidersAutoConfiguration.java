@@ -1,6 +1,5 @@
 package com.pcistudio.kms.autoconfigure;
 
-import com.pcistudio.kms.engine.EncryptionProvider;
 import com.pcistudio.kms.engine.EncryptionProviderManager;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -11,8 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.services.kms.KmsClientBuilder;
 
-import java.util.List;
-
 @Configuration
 @EnableConfigurationProperties(SimpleKmsProperties.class)
 public class ProvidersAutoConfiguration {
@@ -21,7 +18,7 @@ public class ProvidersAutoConfiguration {
     @Configuration(proxyBeanMethods = false)
     static class Aws {
         @Bean
-        @ConditionalOnBean(KmsClientBuilder.class)
+        @ConditionalOnBean(type = "software.amazon.awssdk.services.kms.KmsClientBuilder")
         AwsEncryptionProviderManagerBeanPostProcessor awsEncryptionProviderManagerBeanPostProcessor(SimpleKmsProperties simpleKmsProperties, ObjectProvider<KmsClientBuilder> kmsClientBuilder) {
             return new AwsEncryptionProviderManagerBeanPostProcessor(simpleKmsProperties, kmsClientBuilder);
         }
@@ -37,13 +34,13 @@ public class ProvidersAutoConfiguration {
 
     /**
      * Create the default EncryptionProviderManager
-     * If needed you can inject this class and add more providers if needed
-     * @param encryptionProviders
+     * You can inject this class and add more providers if needed
+     *
      * @return
      */
     @Bean
     @ConditionalOnMissingBean
-    public EncryptionProviderManager encryptionProviderManager(List<EncryptionProvider> encryptionProviders) {
+    public EncryptionProviderManager encryptionProviderManager() {
         return new EncryptionProviderManager();
     }
 }
