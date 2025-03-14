@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.pcistudio</groupId>
         <artifactId>simple-kms</artifactId>
-        <version>0.0.5</version>
+        <version>0.0.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>simple-kms-core</artifactId>
