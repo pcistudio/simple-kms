@@ -1,5 +1,8 @@
 package com.pcistudio.kms.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -12,6 +15,7 @@ import java.util.function.Supplier;
 
 public final class KeyGenerationUtil {
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final Logger log = LoggerFactory.getLogger(KeyGenerationUtil.class);
 
     private KeyGenerationUtil() {}
 
@@ -39,6 +43,9 @@ public final class KeyGenerationUtil {
     public static Supplier<ByteBuffer> ivSupplier(int bits) {
         if (bits % 8 != 0) {
             throw new IllegalArgumentException("Invalid bits number for initialization vector");
+        }
+        if (bits < 128) {
+            log.warn("IV size is not recommended to be less than 128 . Current size: {}", bits);
         }
 
         return () -> ByteBuffer.wrap(SECURE_RANDOM.generateSeed(bits/8));

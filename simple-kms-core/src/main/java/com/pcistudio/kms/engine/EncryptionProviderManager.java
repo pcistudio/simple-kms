@@ -68,7 +68,7 @@ public class EncryptionProviderManager {
 
     public void validate() {
         if (!hasProviders()) {
-            throw new IllegalStateException("None encryption provider defined. This can disabled this adding 'spring.simple-kms.enabled=false'");
+            throw new IllegalStateException("None encryption provider defined. This can be disabled adding 'spring.simple-kms.enabled=false'");
         }
     }
 
